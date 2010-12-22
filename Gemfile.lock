@@ -1,0 +1,33 @@
+PATH
+  remote: .
+  specs:
+    sunspot_matchers (1.1.0.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    builder (3.0.0)
+    diff-lcs (1.1.2)
+    escape (0.0.4)
+    rsolr (0.12.1)
+      builder (>= 2.1.2)
+    rspec (2.1.0)
+      rspec-core (~> 2.1.0)
+      rspec-expectations (~> 2.1.0)
+      rspec-mocks (~> 2.1.0)
+    rspec-core (2.1.0)
+    rspec-expectations (2.1.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.1.0)
+    sunspot (1.1.0)
+      escape (= 0.0.4)
+      rsolr (= 0.12.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (>= 1.0.0)
+  rspec (~> 2.1.0)
+  sunspot (~> 1.1.0)
+  sunspot_matchers!

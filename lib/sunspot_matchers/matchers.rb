@@ -1,0 +1,237 @@
+module SunspotMatchers
+  class BaseMatcher
+    def initialize(actual_search, comparison_search, args)
+      @args = args
+      @actual_search, @comparison_search = actual_search, comparison_search
+    end
+
+    def search_tuple
+      search_tuple = @actual.is_a?(Array) ? @actual : @actual.searches.last
+      raise 'no search found' unless search_tuple
+      search_tuple
+    end
+
+    def actual_search
+      search_tuple.last
+    end
+
+    def search_types
+      search_tuple.first
+    end
+
+    def wildcard?
+      @args && @args.last == any_param
+    end
+
+    def field
+      @args && @args.first
+    end
+
+    def query_params_for_search(search)
+      search.instance_variable_get(:@query).to_params
+    end
+
+    def actual_params
+      @actual_params ||= query_params_for_search(@actual_search)
+    end
+
+    def comparison_params
+      @comparison_params ||= query_params_for_search(@comparison_search)
+    end
+
+    def match?
+      differences.empty?
+    end
+
+    def missing_param_error_message
+      missing_params = differences
+      actual_values = missing_params.keys.collect {|key| "#{key} => #{actual_params[key]}"}
+      missing_values = missing_params.collect{ |key, value| "#{key} => #{value}"}
+      "expected search params: #{actual_values.join(' and ')} to match expected: #{missing_values.join(' and ')}"
+    end
+
+    def unexpected_match_error_message
+      actual_values = keys_to_compare.collect {|key| "#{key} => #{actual_params[key]}"}
+      comparison_values = keys_to_compare.collect {|key| "#{key} => #{comparison_params[key]}"}
+      "expected search params: #{actual_values.join(' and ')} NOT to match expected: #{comparison_values.join(' and ')}"
+    end
+
+    def differences
+      keys_to_compare.inject({}) do |hsh, key|
+        result = compare_key(key)
+        hsh[key] = result unless result.empty?
+        hsh
+      end
+    end
+
+    def compare_key(key)
+      if(actual_params[key].is_a?(Array) || comparison_params[key].is_a?(Array))
+        compare_multi_value(actual_params[key], comparison_params[key])
+      else
+        compare_single_value(actual_params[key], comparison_matcher_for_key(key))
+      end
+    end
+
+    def comparison_matcher_for_key(key)
+      if wildcard? && wildcard_matcher_for_keys.has_key?(key)
+        wildcard_matcher_for_keys[key]
+      else
+        comparison_params[key]
+      end
+    end
+
+    def compare_single_value(actual, comparison)
+      if comparison.is_a?(Regexp)
+        return [] if comparison =~ actual
+        return [comparison]
+      end
+      return [comparison] unless actual == comparison
+      []
+    end
+
+    def compare_multi_value(actual, comparison)
+      filter_values(comparison).reject do |value|
+        next false unless actual
+        value_matcher = Regexp.new(Regexp.escape(value))
+        actual.any?{ |actual_value| actual_value =~ value_matcher }
+      end
+    end
+
+    def normalize_value(value)
+
+    end
+
+    def filter_values(values)
+      return values unless wildcard?
+      field_matcher = Regexp.new(field.to_s)
+      values.select{ |value| field_matcher =~ value }.collect{|value| value.gsub(/:.*/, '')}
+    end
+
+    def wildcard_matcher_for_keys
+      {}
+    end
+  end
+
+  class HaveSearchParams < BaseMatcher
+    def initialize(method, *args)
+      @method = method
+      @args = args
+    end
+
+    def matches?(actual)
+      @actual = actual
+      @matcher = build_matcher
+      @matcher.match?
+    end
+
+    def failure_message_for_should
+      @matcher.missing_param_error_message
+    end
+
+    def failure_message_for_should_not
+      @matcher.unexpected_match_error_message
+    end
+
+    def build_matcher
+      comparison_search = if(@args.last.is_a?(Proc))
+        SunspotMatchers::SunspotSessionSpy.new(nil).build_search(search_types, &@args.last)
+      else
+        method = @method
+        args = @args
+        SunspotMatchers::SunspotSessionSpy.new(nil).build_search(search_types) do
+          send(method, *args)
+        end
+      end
+
+      get_matcher.new(actual_search, comparison_search, @args)
+    end
+
+    def get_matcher
+      case @method
+        when :with, :without
+          WithMatcher
+        when :keywords
+          KeywordsMatcher
+        when :boost
+          BoostMatcher
+        when :facet
+          FacetMatcher
+        when :order_by
+          SortMatcher
+        when :paginate
+          PaginationMatcher
+      end
+    end
+  end
+
+  def have_search_params(method, *args)
+    HaveSearchParams.new(method, *args)
+  end
+
+  class WithMatcher < BaseMatcher
+    def keys_to_compare
+      [:fq]
+    end
+  end
+
+  class KeywordsMatcher < BaseMatcher
+    def keys_to_compare
+      [:q, :qf]
+    end
+
+    def wildcard_matcher_for_keys
+      {:q => /./, :qf => /./}
+    end
+  end
+
+  class BoostMatcher < BaseMatcher
+    def keys_to_compare
+      [:qf, :bq, :bf]
+    end
+  end
+
+  class FacetMatcher < BaseMatcher
+    def keys_to_compare
+      comparison_params.keys.select {|key| /facet/ =~ key.to_s}
+    end
+  end
+
+  class SortMatcher < BaseMatcher
+    def keys_to_compare
+      [:sort]
+    end
+  end
+
+  class PaginationMatcher < BaseMatcher
+    def keys_to_compare
+      [:rows, :start]
+    end
+  end
+
+  class BeASearchFor < BaseMatcher
+    def initialize(expected_class)
+      @expected_class = expected_class
+    end
+
+    def matches?(actual)
+      @actual = actual
+      search_types.include?(@expected_class)
+    end
+
+    def failure_message_for_should
+      "expected search class: #{search_types.join(' and ')} to match expected class: #{@expected_class}"
+    end
+
+    def failure_message_for_should_not
+      "expected search class: #{search_types.join(' and ')} NOT to match expected class: #{@expected_class}"
+    end
+  end
+
+  def be_a_search_for(expected_class)
+    BeASearchFor.new(expected_class)
+  end
+end
+
+def any_param
+  "ANY_PARAM"
+end
