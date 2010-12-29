@@ -15,7 +15,8 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "bundler", ">= 1.0.0"
   s.add_development_dependency "rspec", "~> 2.1.0"
-  s.add_development_dependency "sunspot", "~> 1.1.0"
+  s.add_development_dependency "sunspot", "~> 1.2.0"
+  s.add_development_dependency "rake"
 
   s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'
