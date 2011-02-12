@@ -58,13 +58,17 @@ the `with` restrictions are simply ignored.
 
 ### wildcard matching
 
-keywords, with, and without support wildcard expectations using the `any_param` parameter:
+keywords, with, without, and order_by support wildcard expectations using the `any_param` parameter:
 
     Sunspot.search(Post) do
       with :blog_id, 4
+      order_by :blog_id, :desc
     end
 
     Sunspot.session.should have_search_params(:with, :blog_id, any_param)
+    Sunspot.session.should have_search_params(:order_by, :blog_id, any_param)
+    Sunspot.session.should have_search_params(:order_by, any_param)
+    Sunspot.session.should_not have_search_params(:order_by, :category_ids, any_param)
 
 ### :keywords
 

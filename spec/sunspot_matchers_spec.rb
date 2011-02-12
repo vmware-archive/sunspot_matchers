@@ -6,6 +6,7 @@ class Blog; end
 
 Sunspot.setup(Post) do
   text :body
+  text :name
   string :author_name
   integer :blog_id
   integer :category_ids
@@ -433,6 +434,48 @@ describe "Sunspot Matchers" do
         Sunspot.session.should_not have_search_params(:order_by, Proc.new {
           order_by :average_rating, :asc
         })
+      end
+
+      it "should work with any_param match on direction" do
+        Sunspot.search(Post) do
+          order_by :average_rating, :asc
+        end
+        Sunspot.session.should have_search_params(:order_by, :average_rating, any_param)
+      end
+
+      it "should work with any_param match on field" do
+        Sunspot.search(Post) do
+          order_by :average_rating, :asc
+        end
+        Sunspot.session.should have_search_params(:order_by, any_param)
+      end
+
+      it "should work with any_param negative match on direction" do
+        Sunspot.search(Post) do
+          order_by :score
+        end
+        Sunspot.session.should_not have_search_params(:order_by, :average_rating, any_param)
+      end
+
+      it "should work with any_param negative match on field" do
+        Sunspot.search(Post) do
+          keywords 'great pizza'
+        end
+        Sunspot.session.should_not have_search_params(:order_by, any_param)
+      end
+
+      it "should work with any_param match on field and direction" do
+        Sunspot.search(Post) do
+          order_by :score, :desc
+        end
+        Sunspot.session.should have_search_params(:order_by, any_param, any_param)
+      end
+
+      it "should work with any_param negative match on field and direction" do
+        Sunspot.search(Post) do
+          keywords 'great pizza'
+        end
+        Sunspot.session.should_not have_search_params(:order_by, any_param, any_param)
       end
     end
 

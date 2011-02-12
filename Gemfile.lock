@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sunspot_matchers (1.2.1.0)
+    sunspot_matchers (1.2.1.1)
 
 GEM
   remote: http://rubygems.org/

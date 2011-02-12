@@ -1,8 +1,21 @@
 module SunspotMatchers
   class BaseMatcher
-    def initialize(actual_search, comparison_search, args)
+    attr_accessor :args
+
+    def initialize(actual, args)
+      @actual = actual
       @args = args
-      @actual_search, @comparison_search = actual_search, comparison_search
+      build_comparison_search
+    end
+
+    def build_comparison_search
+      @comparison_search = if(@args.last.is_a?(Proc))
+        SunspotMatchers::SunspotSessionSpy.new(nil).build_search(search_types, &args.last)
+      else
+        SunspotMatchers::SunspotSessionSpy.new(nil).build_search(search_types) do
+          send(search_method, *args)
+        end
+      end
     end
 
     def search_tuple
@@ -32,7 +45,7 @@ module SunspotMatchers
     end
 
     def actual_params
-      @actual_params ||= query_params_for_search(@actual_search)
+      @actual_params ||= query_params_for_search(actual_search)
     end
 
     def comparison_params
@@ -83,7 +96,7 @@ module SunspotMatchers
     def compare_single_value(actual, comparison)
       if comparison.is_a?(Regexp)
         return [] if comparison =~ actual
-        return [comparison]
+        return [comparison.source]
       end
       return [comparison] unless actual == comparison
       []
@@ -97,10 +110,6 @@ module SunspotMatchers
       end
     end
 
-    def normalize_value(value)
-
-    end
-
     def filter_values(values)
       return values unless wildcard?
       field_matcher = Regexp.new(field.to_s)
@@ -112,7 +121,7 @@ module SunspotMatchers
     end
   end
 
-  class HaveSearchParams < BaseMatcher
+  class HaveSearchParams
     def initialize(method, *args)
       @method = method
       @args = args
@@ -120,7 +129,7 @@ module SunspotMatchers
 
     def matches?(actual)
       @actual = actual
-      @matcher = build_matcher
+      @matcher = get_matcher.new(@actual, @args)
       @matcher.match?
     end
 
@@ -130,20 +139,6 @@ module SunspotMatchers
 
     def failure_message_for_should_not
       @matcher.unexpected_match_error_message
-    end
-
-    def build_matcher
-      comparison_search = if(@args.last.is_a?(Proc))
-        SunspotMatchers::SunspotSessionSpy.new(nil).build_search(search_types, &@args.last)
-      else
-        method = @method
-        args = @args
-        SunspotMatchers::SunspotSessionSpy.new(nil).build_search(search_types) do
-          send(method, *args)
-        end
-      end
-
-      get_matcher.new(actual_search, comparison_search, @args)
     end
 
     def get_matcher
@@ -157,7 +152,7 @@ module SunspotMatchers
         when :facet
           FacetMatcher
         when :order_by
-          SortMatcher
+          OrderByMatcher
         when :paginate
           PaginationMatcher
       end
@@ -169,12 +164,20 @@ module SunspotMatchers
   end
 
   class WithMatcher < BaseMatcher
+    def search_method
+      :with
+    end
+
     def keys_to_compare
       [:fq]
     end
   end
 
   class KeywordsMatcher < BaseMatcher
+    def search_method
+      :keywords
+    end
+
     def keys_to_compare
       [:q, :qf]
     end
@@ -185,30 +188,79 @@ module SunspotMatchers
   end
 
   class BoostMatcher < BaseMatcher
+    def search_method
+      :boost
+    end
+
+
     def keys_to_compare
       [:qf, :bq, :bf]
     end
   end
 
   class FacetMatcher < BaseMatcher
+    def search_method
+      :facet
+    end
+
     def keys_to_compare
       comparison_params.keys.select {|key| /facet/ =~ key.to_s}
     end
   end
 
-  class SortMatcher < BaseMatcher
+  class OrderByMatcher < BaseMatcher
+    def search_method
+      :order_by
+    end
+
     def keys_to_compare
       [:sort]
+    end
+
+    def wildcard_matcher_for_keys
+      return {:sort => /./} if field_wildcard?
+      param = comparison_params[:sort]
+      regex = Regexp.new(param.gsub(any_param, '.*'))
+      {:sort => regex}
+    end
+
+    def field_wildcard?
+      @args.first == any_param
+    end
+
+    def direction_wildcard?
+      @args.length == 2 && @args.last == any_param
+    end
+
+    def args
+      return @args unless direction_wildcard?
+      @args[0...-1] + [:asc]
+    end
+
+    def build_comparison_search
+      if field_wildcard?
+        @comparison_params = {:sort => any_param}
+      elsif direction_wildcard?
+        super
+        @comparison_params = comparison_params
+        @comparison_params[:sort].gsub!("asc", any_param)
+      else
+        super
+      end
     end
   end
 
   class PaginationMatcher < BaseMatcher
+    def search_method
+      :paginate
+    end
+
     def keys_to_compare
       [:rows, :start]
     end
   end
 
-  class BeASearchFor < BaseMatcher
+  class BeASearchFor
     def initialize(expected_class)
       @expected_class = expected_class
     end
@@ -216,6 +268,16 @@ module SunspotMatchers
     def matches?(actual)
       @actual = actual
       search_types.include?(@expected_class)
+    end
+
+    def search_tuple
+      search_tuple = @actual.is_a?(Array) ? @actual : @actual.searches.last
+      raise 'no search found' unless search_tuple
+      search_tuple
+    end
+
+    def search_types
+      search_tuple.first
     end
 
     def failure_message_for_should
