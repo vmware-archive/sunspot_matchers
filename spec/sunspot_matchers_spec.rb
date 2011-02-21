@@ -215,6 +215,13 @@ describe "Sunspot Matchers" do
         Sunspot.session.should_not have_search_params(:without, :author_name, 'John Twain')
       end
 
+      it "should not match a with search" do
+        Sunspot.search(Post) do
+          with :author_name, 'Mark Twain'
+        end
+        Sunspot.session.should_not have_search_params(:without, :author_name, 'Mark Twain')
+      end
+
       it "should match for multiple without" do
         Sunspot.search(Post) do
           without :author_name, 'Mark Twain'
