@@ -143,8 +143,10 @@ module SunspotMatchers
 
     def get_matcher
       case @method
-        when :with, :without
+        when :with
           WithMatcher
+        when :without
+          WithoutMatcher
         when :keywords
           KeywordsMatcher
         when :boost
@@ -166,6 +168,16 @@ module SunspotMatchers
   class WithMatcher < BaseMatcher
     def search_method
       :with
+    end
+
+    def keys_to_compare
+      [:fq]
+    end
+  end
+
+  class WithoutMatcher < BaseMatcher
+    def search_method
+      :without
     end
 
     def keys_to_compare
