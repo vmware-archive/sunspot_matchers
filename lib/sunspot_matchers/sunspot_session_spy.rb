@@ -97,7 +97,7 @@ module SunspotMatchers
       if types.length == 1
         Sunspot::Setup.for(types.first)
       else
-        CompositeSetup.for(types)
+        Sunspot::CompositeSetup.for(types)
       end
     end
   end

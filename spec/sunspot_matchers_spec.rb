@@ -28,6 +28,13 @@ describe "Sunspot Matchers" do
   end
 
   describe "have_search_params" do
+    it "should allow you to specify your search on multiple models" do
+      Sunspot.search([Post, Blog]) do
+        keywords 'great pizza'
+      end
+      Sunspot.session.searches.first.should have_search_params(:keywords, 'great pizza')
+    end
+
     it "should allow you to specify your search" do
       Sunspot.search(Post) do
         keywords 'great pizza'
