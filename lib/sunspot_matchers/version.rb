@@ -1,3 +1,3 @@
 module SunspotMatchers
-  VERSION = "1.2.1.3"
+  VERSION = "1.2.1.4"
 end

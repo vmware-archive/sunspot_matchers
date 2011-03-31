@@ -73,6 +73,7 @@ module SunspotMatchers
     end
 
     def new_search(*types, &block)
+      types.flatten!
       search = build_search(*types, &block)
       @searches << [types, search]
       search

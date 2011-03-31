@@ -1,8 +1,10 @@
 require 'sunspot'
 require 'sunspot_matchers'
+require 'rspec'
 
 class Post; end
 class Blog; end
+class Person; end
 
 Sunspot.setup(Post) do
   text :body
@@ -32,7 +34,7 @@ describe "Sunspot Matchers" do
       Sunspot.search([Post, Blog]) do
         keywords 'great pizza'
       end
-      Sunspot.session.searches.first.should have_search_params(:keywords, 'great pizza')
+      Sunspot.session.should have_search_params(:keywords, 'great pizza')
     end
 
     it "should allow you to specify your search" do
@@ -693,6 +695,18 @@ describe "Sunspot Matchers" do
 
     it "should fail if the model is incorrect" do
       Sunspot.session.should_not be_a_search_for(Blog)
+    end
+
+    describe "when searching for multiple models" do
+      it "should be true for both" do
+        Sunspot.search([Post, Blog]) do
+          keywords 'great pizza'
+        end
+
+        Sunspot.session.should be_a_search_for(Post)
+        Sunspot.session.should be_a_search_for(Blog)
+        Sunspot.session.should_not be_a_search_for(Person)
+      end
     end
 
     describe "with multiple searches" do
