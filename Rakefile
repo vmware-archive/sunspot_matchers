@@ -11,3 +11,10 @@ desc "Runs the CI build"
 task :cruise do
   Rake::Task["spec"].execute
 end
+
+require 'rake/testtask'
+Rake::TestTask.new(:test) do |test|
+  test.libs << 'lib' << 'test'
+  test.pattern = 'test/*_test.rb'
+  test.verbose = true
+end
