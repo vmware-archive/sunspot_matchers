@@ -106,7 +106,8 @@ module SunspotMatchers
       filter_values(comparison).reject do |value|
         next false unless actual
         value_matcher = Regexp.new(Regexp.escape(value))
-        actual.any?{ |actual_value| actual_value =~ value_matcher }
+        cmp_value = actual.is_a?(String) ? actual.chars : actual
+        cmp_value.any?{ |actual_value| actual_value =~ value_matcher }
       end
     end
 
