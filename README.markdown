@@ -7,7 +7,7 @@ without doing full integration tests.
 The goal of these matchers are to make it easier to unit test search logic without having to construct the individual
 fixture scenarios inside of Solr and then actually perform a search against Solr.
 
-# Installation
+# Installation for RSpec
 
 You will need to replace the Sunspot Session object with the spy provided.  You can do this globally by putting the
 following in your spec_helper.
@@ -27,6 +27,19 @@ You will also need to include the matchers in your specs.  Again, this can be do
     config.include SunspotMatchers
 
 Alternately, you could include them into individual tests if needed.
+
+# Installation for Test::Unit
+
+You will need to replace the Sunspot Session object with the spy provided.  You can do this by requiring the sunspot test helper
+
+    require 'sunspot_matchers/test_helper'
+
+and then in the test case that you wish to override, including the SunspotMatchers::TestHelper class and set the sunspot session in your setup.
+
+    include SunspotMatchers::TestHelper
+    def setup
+      Sunspot.session = SunspotMatchers::SunspotSessionSpy.new(Sunspot.session)
+    end
 
 # Matchers
 
@@ -231,3 +244,37 @@ Boost function matching:
         boost(function { sum(:average_rating, product(:popularity, 10)) })
       end
     })
+
+# Assertions
+
+If you are using Test::Unit, the format is similar, but we use 
+
+`assert_has_search_params` 
+`assert_has_no_search_params` 
+`assert_is_search_for`
+`assert_is_not_search_for`
+
+These are used like:
+
+    Sunspot.search([ Post, Blog ]) do
+      keywords 'great pizza'
+    end
+    assert_has_search_params Sunspot.session, :keywords, 'great pizza'
+
+    Sunspot.search(Post) do
+      with :category_ids, 1..3
+    end
+    assert_has_search_params Sunspot.session, :with, Proc.new {
+      with :category_ids, 1..3
+    }
+    
+    Sunspot.search(Post) { keywords 'great pizza' }
+    Sunspot.search([ Post, Blog ]) do
+      keywords 'great pizza'
+    end
+    
+    assert_is_search_for Sunspot.session, Post
+    assert_is_search_for Sunspot.session, Blog
+    assert_is_not_search_for Sunspot.session, Person
+    
+Check out the test/sunspot_matchers_test.rb for more examples
