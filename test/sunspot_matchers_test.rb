@@ -1,3 +1,5 @@
+require 'rubygems'
+require 'bundler'
 require 'sunspot_matchers/test_helper'
 require 'test/unit'
 
