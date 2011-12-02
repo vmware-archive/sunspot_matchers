@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Joseph Palermo"]
   s.email       = []
   s.homepage    = "https://github.com/pivotal/sunspot_matchers"
-  s.summary     = "RSpec matchers for testing Sunspot"
-  s.description = "These matchers allow you to test what is happening inside the Sunspot Search DSL blocks"
+  s.summary     = "RSpec matchers and Test::Unit assertions for testing Sunspot"
+  s.description = "These matchers and assertions allow you to test what is happening inside the Sunspot Search DSL blocks"
   s.license     = "MIT"
 
   s.required_rubygems_version = ">= 1.3.6"
