@@ -48,12 +48,19 @@ describe "Sunspot Matchers" do
       Sunspot.session.searches.last.should have_search_params(:keywords, 'bad pizza')
     end
 
-    describe "keyword matcher" do
+    describe "keyword/fulltext matcher" do
       it "should match if search matches" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
         Sunspot.session.should have_search_params(:keywords, 'great pizza')
+      end
+
+      it "should work with fulltext also" do
+        Sunspot.search(Post) do
+          fulltext 'great pizza'
+        end
+        Sunspot.session.should have_search_params(:fulltext, 'great pizza')
       end
 
       it "should not match if search does not match" do
@@ -717,6 +724,16 @@ describe "Sunspot Matchers" do
         Sunspot.session.searches.first.should be_a_search_for(Post)
         Sunspot.session.searches.last.should be_a_search_for(Blog)
       end
+    end
+  end
+
+  describe "have_searchable_field" do
+    it "should succeed if the model has the given field" do
+      Post.should have_searchable_field(:body)
+    end
+
+    it "should fail if the model does not have the given field" do
+      Post.should_not have_searchable_field(:potato)
     end
   end
 end

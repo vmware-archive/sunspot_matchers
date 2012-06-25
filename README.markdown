@@ -54,9 +54,15 @@ an explicit search specified, it will use the last one.
 
 `Sunspot.session.searches.first.should be_a_search_for(Post)`
 
+## have_searchable_field
+
+If you want to verify that a model has a searchable field, you can use this matcher:
+
+`Post.should have_searchable_field(:name)`
+
 ## have_search_params
 
-This is where the bulk of the functionality lies.  There are seven types of search matches you can perform: `keywords`,
+This is where the bulk of the functionality lies.  There are seven types of search matches you can perform: `keywords` or `fulltext`,
 `with`, `without`, `paginate`, `order_by`, `facet`, and `boost`.
 
 In all of the examples below, the expectation fully matches the search terms.  This is not expected or required.  You can

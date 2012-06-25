@@ -148,7 +148,7 @@ module SunspotMatchers
           WithMatcher
         when :without
           WithoutMatcher
-        when :keywords
+        when :keywords, :fulltext
           KeywordsMatcher
         when :boost
           BoostMatcher
@@ -304,6 +304,32 @@ module SunspotMatchers
 
   def be_a_search_for(expected_class)
     BeASearchFor.new(expected_class)
+  end
+
+  class HaveSearchableField
+
+    def initialize(field)
+      @field = field
+    end
+
+    def matches?(klass)
+      @klass = klass
+      Sunspot::Setup.for(@klass).text_field_factories.find do |field|
+        field.name == @field
+      end
+    end
+
+    def failure_message_for_should
+      "expected class: #{@klass} to have searchable field: #{@field}"
+    end
+
+    def failure_message_for_should_not
+      "expected class: #{@klass} NOT to have searchable field: #{@field}"
+    end
+  end
+
+  def have_searchable_field(field)
+    HaveSearchableField.new(field)
   end
 end
 
