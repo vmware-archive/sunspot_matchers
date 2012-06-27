@@ -158,6 +158,8 @@ module SunspotMatchers
           OrderByMatcher
         when :paginate
           PaginationMatcher
+        when :group
+          GroupMatcher
       end
     end
   end
@@ -270,6 +272,16 @@ module SunspotMatchers
 
     def keys_to_compare
       [:rows, :start]
+    end
+  end
+
+  class GroupMatcher < BaseMatcher
+    def search_method
+      :group
+    end
+
+    def keys_to_compare
+      comparison_params.keys.select {|key| /group/ =~ key.to_s}
     end
   end
 

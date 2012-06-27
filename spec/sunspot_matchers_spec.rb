@@ -687,6 +687,23 @@ describe "Sunspot Matchers" do
       end
     end
 
+    describe "group matcher" do
+      it "should match if grouping a field" do
+        Sunspot.search(Post) do
+          keywords 'great pizza'
+          group :author_name
+        end
+        Sunspot.session.should have_search_params(:group, :author_name)
+      end
+
+      it "should match if grouping a field" do
+        Sunspot.search(Post) do
+          keywords 'great pizza'
+        end
+        Sunspot.session.should_not have_search_params(:group, :author_name)
+      end
+    end
+
   end
 
   describe "be_a_search_for" do
