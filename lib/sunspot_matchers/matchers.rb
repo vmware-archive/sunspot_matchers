@@ -312,8 +312,8 @@ module SunspotMatchers
       @field = field
     end
 
-    def matches?(klass)
-      @klass = klass
+    def matches?(klass_or_object)
+      @klass = klass_or_object.class.name == 'Class' ? klass_or_object : klass_or_object.class
       @sunspot = Sunspot::Setup.for(@klass)
       (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).uniq.include?(@field)
     end
