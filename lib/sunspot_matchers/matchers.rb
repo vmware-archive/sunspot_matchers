@@ -314,9 +314,8 @@ module SunspotMatchers
 
     def matches?(klass)
       @klass = klass
-      Sunspot::Setup.for(@klass).text_field_factories.find do |field|
-        field.name == @field
-      end
+      @sunspot = Sunspot::Setup.for(@klass)
+      (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).uniq.include?(@field)
     end
 
     def failure_message_for_should
