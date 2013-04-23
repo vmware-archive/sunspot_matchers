@@ -75,10 +75,10 @@ describe "Sunspot Matchers" do
           keywords 'great pizza'
           keywords 'terrible pizza'
         end
-        Sunspot.session.should have_search_params(:keywords, Proc.new {
+        Sunspot.session.should have_search_params(:keywords) {
           keywords 'great pizza'
           keywords 'terrible pizza'
-        })
+        }
       end
 
       it "should work with any_param match" do
@@ -116,46 +116,46 @@ describe "Sunspot Matchers" do
           with :author_name, 'Mark Twain'
           with :author_name, 'John Twain'
         end
-        Sunspot.session.should have_search_params(:with, Proc.new {
+        Sunspot.session.should have_search_params(:with) {
           with :author_name, 'Mark Twain'
           with :author_name, 'John Twain'
-        })
+        }
       end
 
       it "should match for greater_than" do
         Sunspot.search(Post) do
           with(:category_ids).greater_than(1)
         end
-        Sunspot.session.should have_search_params(:with, Proc.new {
+        Sunspot.session.should have_search_params(:with) {
           with(:category_ids).greater_than(1)
-        })
+        }
       end
 
       it "should match for less_than" do
         Sunspot.search(Post) do
           with(:category_ids).less_than(1)
         end
-        Sunspot.session.should have_search_params(:with, Proc.new {
+        Sunspot.session.should have_search_params(:with) {
           with(:category_ids).less_than(1)
-        })
+        }
       end
 
       it "should match for range" do
         Sunspot.search(Post) do
           with :category_ids, 1..3
         end
-        Sunspot.session.should have_search_params(:with, Proc.new {
+        Sunspot.session.should have_search_params(:with) {
           with :category_ids, 1..3
-        })
+        }
       end
 
       it "should match any_of" do
         Sunspot.search(Post) do
           with(:category_ids).any_of [1,2]
         end
-        Sunspot.session.should have_search_params(:with, Proc.new {
+        Sunspot.session.should have_search_params(:with) {
           with(:category_ids).any_of [1,2]
-        })
+        }
       end
 
       it "should match any_of multiline" do
@@ -165,12 +165,12 @@ describe "Sunspot Matchers" do
             with :category_ids, 2
           end
         end
-        Sunspot.session.should have_search_params(:with, Proc.new {
+        Sunspot.session.should have_search_params(:with) {
           any_of do
             with :category_ids, 1
             with :category_ids, 2
           end
-        })
+        }
       end
 
       it "should match any_of and all_of" do
@@ -183,7 +183,7 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should have_search_params(:with, Proc.new {
+        Sunspot.session.should have_search_params(:with) {
           any_of do
             with :category_ids, 1
             all_of do
@@ -191,7 +191,7 @@ describe "Sunspot Matchers" do
               with :category_ids, 3
             end
           end
-        })
+        }
       end
 
       it "should work with any_param match" do
@@ -243,46 +243,46 @@ describe "Sunspot Matchers" do
           without :author_name, 'Mark Twain'
           without :author_name, 'John Twain'
         end
-        Sunspot.session.should have_search_params(:without, Proc.new {
+        Sunspot.session.should have_search_params(:without) {
           without :author_name, 'Mark Twain'
           without :author_name, 'John Twain'
-        })
+        }
       end
 
       it "should match for greater_than" do
         Sunspot.search(Post) do
           without(:category_ids).greater_than(1)
         end
-        Sunspot.session.should have_search_params(:without, Proc.new {
+        Sunspot.session.should have_search_params(:without) {
           without(:category_ids).greater_than(1)
-        })
+        }
       end
 
       it "should match for less_than" do
         Sunspot.search(Post) do
           without(:category_ids).less_than(1)
         end
-        Sunspot.session.should have_search_params(:without, Proc.new {
+        Sunspot.session.should have_search_params(:without) {
           without(:category_ids).less_than(1)
-        })
+        }
       end
 
       it "should match for range" do
         Sunspot.search(Post) do
           without :category_ids, 1..3
         end
-        Sunspot.session.should have_search_params(:without, Proc.new {
+        Sunspot.session.should have_search_params(:without) {
           without :category_ids, 1..3
-        })
+        }
       end
 
       it "should match any_of" do
         Sunspot.search(Post) do
           without(:category_ids).any_of [1,2]
         end
-        Sunspot.session.should have_search_params(:without, Proc.new {
+        Sunspot.session.should have_search_params(:without) {
           without(:category_ids).any_of [1,2]
-        })
+        }
       end
 
       it "should match any_of multiline" do
@@ -292,12 +292,12 @@ describe "Sunspot Matchers" do
             without :category_ids, 2
           end
         end
-        Sunspot.session.should have_search_params(:without, Proc.new {
+        Sunspot.session.should have_search_params(:without) {
           any_of do
             without :category_ids, 1
             without :category_ids, 2
           end
-        })
+        }
       end
 
       it "should match any_of and all_of" do
@@ -310,7 +310,7 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should have_search_params(:without, Proc.new {
+        Sunspot.session.should have_search_params(:without) {
           any_of do
             without :category_ids, 1
             all_of do
@@ -318,7 +318,7 @@ describe "Sunspot Matchers" do
               without :category_ids, 3
             end
           end
-        })
+        }
       end
 
       it "should work with any_param match" do
@@ -400,10 +400,10 @@ describe "Sunspot Matchers" do
           order_by :published_at, :asc
           order_by :average_rating, :asc
         end
-        Sunspot.session.should have_search_params(:order_by, Proc.new {
+        Sunspot.session.should have_search_params(:order_by) {
           order_by :published_at, :asc
           order_by :average_rating, :asc
-        })
+        }
       end
 
       it "should not match if multiple orderings are reversed" do
@@ -411,10 +411,10 @@ describe "Sunspot Matchers" do
           order_by :average_rating, :asc
           order_by :published_at, :asc
         end
-        Sunspot.session.should_not have_search_params(:order_by, Proc.new {
+        Sunspot.session.should_not have_search_params(:order_by) {
           order_by :published_at, :asc
           order_by :average_rating, :asc
-        })
+        }
       end
 
       it "should match when using random" do
@@ -422,10 +422,10 @@ describe "Sunspot Matchers" do
           order_by :average_rating, :asc
           order_by :random
         end
-        Sunspot.session.should have_search_params(:order_by, Proc.new {
+        Sunspot.session.should have_search_params(:order_by) {
           order_by :average_rating, :asc
           order_by :random
-        })
+        }
       end
 
       it "should not match when random is missing" do
@@ -433,9 +433,9 @@ describe "Sunspot Matchers" do
           order_by :average_rating, :asc
           order_by :random
         end
-        Sunspot.session.should_not have_search_params(:order_by, Proc.new {
+        Sunspot.session.should_not have_search_params(:order_by) {
           order_by :average_rating, :asc
-        })
+        }
       end
 
       it "should match when using score" do
@@ -443,10 +443,10 @@ describe "Sunspot Matchers" do
           order_by :average_rating, :asc
           order_by :score
         end
-        Sunspot.session.should have_search_params(:order_by, Proc.new {
+        Sunspot.session.should have_search_params(:order_by) {
           order_by :average_rating, :asc
           order_by :score
-        })
+        }
       end
 
       it "should not match when score is missing" do
@@ -454,9 +454,9 @@ describe "Sunspot Matchers" do
           order_by :average_rating, :asc
           order_by :score
         end
-        Sunspot.session.should_not have_search_params(:order_by, Proc.new {
+        Sunspot.session.should_not have_search_params(:order_by) {
           order_by :average_rating, :asc
-        })
+        }
       end
 
       it "should work with any_param match on direction" do
@@ -523,10 +523,10 @@ describe "Sunspot Matchers" do
             category_filter = with(:category_ids, 2)
             facet(:category_ids, :exclude => category_filter)
           end
-          Sunspot.session.should have_search_params(:facet, Proc.new {
+          Sunspot.session.should have_search_params(:facet) {
             category_filter = with(:category_ids, 2)
             facet(:category_ids, :exclude => category_filter)
-          })
+          }
         end
       end
 
@@ -542,7 +542,7 @@ describe "Sunspot Matchers" do
               end
             end
           end
-          Sunspot.session.should have_search_params(:facet, Proc.new {
+          Sunspot.session.should have_search_params(:facet) {
             facet(:average_rating) do
               row(1.0..2.0) do
                 with(:average_rating, 1.0..2.0)
@@ -551,7 +551,7 @@ describe "Sunspot Matchers" do
                 with(:average_rating, 2.0..3.0)
               end
             end
-          })
+          }
         end
 
         it "should not match if actual search is missing a facet" do
@@ -562,7 +562,7 @@ describe "Sunspot Matchers" do
               end
             end
           end
-          Sunspot.session.should_not have_search_params(:facet, Proc.new {
+          Sunspot.session.should_not have_search_params(:facet) {
             facet(:average_rating) do
               row(1.0..2.0) do
                 with(:average_rating, 1.0..2.0)
@@ -571,7 +571,7 @@ describe "Sunspot Matchers" do
                 with(:average_rating, 2.0..3.0)
               end
             end
-          })
+          }
         end
 
         it "should not match if facet query is different" do
@@ -585,7 +585,7 @@ describe "Sunspot Matchers" do
               end
             end
           end
-          Sunspot.session.should_not have_search_params(:facet, Proc.new {
+          Sunspot.session.should_not have_search_params(:facet) {
             facet(:average_rating) do
               row(1.0..2.0) do
                 with(:average_rating, 1.0..2.0)
@@ -594,7 +594,7 @@ describe "Sunspot Matchers" do
                 with(:average_rating, 2.0..4.0)
               end
             end
-          })
+          }
         end
       end
     end
@@ -606,11 +606,11 @@ describe "Sunspot Matchers" do
             boost_fields :body => 2.0
           end
         end
-        Sunspot.session.should have_search_params(:boost, Proc.new {
+        Sunspot.session.should have_search_params(:boost) {
           keywords 'great pizza' do
             boost_fields :body => 2.0
           end
-        })
+        }
       end
 
       it "should not match if field boost does not match" do
@@ -619,11 +619,11 @@ describe "Sunspot Matchers" do
             boost_fields :body => 2.0
           end
         end
-        Sunspot.session.should_not have_search_params(:boost, Proc.new {
+        Sunspot.session.should_not have_search_params(:boost) {
           keywords 'great pizza' do
             boost_fields :body => 3.0
           end
-        })
+        }
       end
 
       it "should match if boost query matches" do
@@ -634,13 +634,13 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should have_search_params(:boost, Proc.new {
+        Sunspot.session.should have_search_params(:boost) {
           keywords 'great pizza' do
             boost(2.0) do
               with :blog_id, 4
             end
           end
-        })
+        }
       end
 
       it "should not match if boost query does not match" do
@@ -651,13 +651,13 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should_not have_search_params(:boost, Proc.new {
+        Sunspot.session.should_not have_search_params(:boost) {
           keywords 'great pizza' do
             boost(2.0) do
               with :blog_id, 5
             end
           end
-        })
+        }
       end
 
       it "should match if boost function matches" do
@@ -666,11 +666,11 @@ describe "Sunspot Matchers" do
             boost(function { sum(:average_rating, product(:popularity, 10)) })
           end
         end
-        Sunspot.session.should have_search_params(:boost, Proc.new {
+        Sunspot.session.should have_search_params(:boost) {
           keywords 'great pizza' do
             boost(function { sum(:average_rating, product(:popularity, 10)) })
           end
-        })
+        }
       end
 
       it "should not match if boost function does not match" do
@@ -679,11 +679,11 @@ describe "Sunspot Matchers" do
             boost(function { sum(:average_rating, product(:popularity, 10)) })
           end
         end
-        Sunspot.session.should_not have_search_params(:boost, Proc.new {
+        Sunspot.session.should_not have_search_params(:boost) {
           keywords 'great pizza' do
             boost(function { sum(:average_rating, product(:popularity, 42)) })
           end
-        })
+        }
       end
     end
 

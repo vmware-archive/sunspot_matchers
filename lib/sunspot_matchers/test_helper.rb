@@ -6,10 +6,10 @@ module SunspotMatchers
   class HaveSearchParamsForSession
       include Test::Unit::Assertions
 
-      def initialize(session, method, *args)
+      def initialize(session, method, *args, &block)
         @session = session
         @method = method
-        @args = args
+        @args = [*args, block].compact
       end
 
       def get_matcher
@@ -63,15 +63,15 @@ module SunspotMatchers
     end
   end
   module TestHelper
-    def assert_has_search_params(session, *method_and_args)
+    def assert_has_search_params(session, *method_and_args, &block)
       method, *args = method_and_args
-      matcher = HaveSearchParamsForSession.new(session, method, *args).get_matcher
+      matcher = HaveSearchParamsForSession.new(session, method, *args, &block).get_matcher
       assert matcher.match?, matcher.missing_param_error_message
     end
 
-    def assert_has_no_search_params(session, *method_and_args)
+    def assert_has_no_search_params(session, *method_and_args, &block)
       method, *args = method_and_args
-      matcher = HaveSearchParamsForSession.new(session, method, *args).get_matcher
+      matcher = HaveSearchParamsForSession.new(session, method, *args, &block).get_matcher
       assert !matcher.match?, matcher.unexpected_match_error_message
     end
     

@@ -69,10 +69,10 @@ class SunspotMatchersTest < Test::Unit::TestCase
       keywords 'terrible pizza'
     end
 
-    assert_has_search_params Sunspot.session, :keywords, Proc.new {
+    assert_has_search_params Sunspot.session, :keywords do
       keywords 'great pizza'
       keywords 'terrible pizza'
-    }
+    end
   end
 
   def test_allow_any_match_keyword
@@ -108,46 +108,46 @@ class SunspotMatchersTest < Test::Unit::TestCase
       with :author_name, 'Mark Twain'
       with :author_name, 'John Twain'
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with do
       with :author_name, 'Mark Twain'
       with :author_name, 'John Twain'
-    }
+    end
   end
 
   def test_with_matcher_matches_greater_than
     Sunspot.search(Post) do
       with(:category_ids).greater_than(1)
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with do
       with(:category_ids).greater_than(1)
-    }
+    end
   end
 
   def test_with_matcher_matches_less_than
     Sunspot.search(Post) do
       with(:category_ids).less_than(1)
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with do
       with(:category_ids).less_than(1)
-    }
+    end
   end
 
   def test_with_matcher_matches_range
     Sunspot.search(Post) do
       with :category_ids, 1..3
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with do
       with :category_ids, 1..3
-    }
+    end
   end
 
   def test_with_matcher_matches_any_of
     Sunspot.search(Post) do
       with(:category_ids).any_of [ 1, 2 ]
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with do
       with(:category_ids).any_of [ 1, 2 ]
-    }
+    end
   end
 
   def test_with_matcher_matches_any_of_multiline
@@ -157,12 +157,12 @@ class SunspotMatchersTest < Test::Unit::TestCase
         with :category_ids, 2
       end
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with do
       any_of do
         with :category_ids, 1
         with :category_ids, 2
       end
-    }
+    end
   end
 
   def test_with_matcher_matches_any_of_and_all_of
@@ -175,7 +175,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
         end
       end
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with do
       any_of do
         with :category_ids, 1
         all_of do
@@ -183,7 +183,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
           with :category_ids, 3
         end
       end
-    }
+    end
   end
 
   def test_with_matcher_matches_any_param_match
@@ -235,46 +235,46 @@ class SunspotMatchersTest < Test::Unit::TestCase
       without :author_name, 'Mark Twain'
       without :author_name, 'John Twain'
     end
-    assert_has_search_params Sunspot.session, :without, Proc.new {
+    assert_has_search_params Sunspot.session, :without do
       without :author_name, 'Mark Twain'
       without :author_name, 'John Twain'
-    }
+    end
   end
 
   def test_without_matcher_matches_greater_than
     Sunspot.search(Post) do
       without(:category_ids).greater_than(1)
     end
-    assert_has_search_params Sunspot.session, :without, Proc.new {
+    assert_has_search_params Sunspot.session, :without do
       without(:category_ids).greater_than(1)
-    }
+    end
   end
 
   def test_without_matcher_matches_less_than
     Sunspot.search(Post) do
       without(:category_ids).less_than(1)
     end
-    assert_has_search_params Sunspot.session, :without, Proc.new {
+    assert_has_search_params Sunspot.session, :without do
       without(:category_ids).less_than(1)
-    }
+    end
   end
 
   def test_without_matcher_matches_range
     Sunspot.search(Post) do
       without :category_ids, 1..3
     end
-    assert_has_search_params Sunspot.session, :without, Proc.new {
+    assert_has_search_params Sunspot.session, :without do
       without :category_ids, 1..3
-    }
+    end
   end
 
   def test_without_matcher_matches_any_of
     Sunspot.search(Post) do
       without(:category_ids).any_of [ 1, 2 ]
     end
-    assert_has_search_params Sunspot.session, :without, Proc.new {
+    assert_has_search_params Sunspot.session, :without do
       without(:category_ids).any_of [ 1, 2 ]
-    }
+    end
   end
 
   def test_without_matcher_matches_any_of_multiline
@@ -284,12 +284,12 @@ class SunspotMatchersTest < Test::Unit::TestCase
         without :category_ids, 2
       end
     end
-    assert_has_search_params Sunspot.session, :without, Proc.new {
+    assert_has_search_params Sunspot.session, :without do
       any_of do
         without :category_ids, 1
         without :category_ids, 2
       end
-    }
+    end
   end
 
   def test_without_matcher_matches_any_of_and_all_of
@@ -302,7 +302,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
         end
       end
     end
-    assert_has_search_params Sunspot.session, :without, Proc.new {
+    assert_has_search_params Sunspot.session, :without do
       any_of do
         without :category_ids, 1
         all_of do
@@ -310,7 +310,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
           without :category_ids, 3
         end
       end
-    }
+    end
   end
 
   def test_without_matcher_matches_any_param_match
@@ -390,10 +390,10 @@ class SunspotMatchersTest < Test::Unit::TestCase
       order_by :published_at, :asc
       order_by :average_rating, :asc
     end
-    assert_has_search_params Sunspot.session, :order_by, Proc.new {
+    assert_has_search_params Sunspot.session, :order_by do
       order_by :published_at, :asc
       order_by :average_rating, :asc
-    }
+    end
   end
 
   def test_order_by_matcher_doesnt_match_multiple_reversed
@@ -401,10 +401,10 @@ class SunspotMatchersTest < Test::Unit::TestCase
       order_by :average_rating, :asc
       order_by :published_at, :asc
     end
-    assert_has_no_search_params Sunspot.session, :order_by, Proc.new {
+    assert_has_no_search_params Sunspot.session, :order_by do
       order_by :published_at, :asc
       order_by :average_rating, :asc
-    }
+    end
   end
 
   def test_order_by_matcher_matches_on_random
@@ -412,10 +412,10 @@ class SunspotMatchersTest < Test::Unit::TestCase
       order_by :average_rating, :asc
       order_by :random
     end
-    assert_has_search_params Sunspot.session, :order_by, Proc.new {
+    assert_has_search_params Sunspot.session, :order_by do
       order_by :average_rating, :asc
       order_by :random
-    }
+    end
   end
 
   def test_order_by_matcher_doesnt_match_without_random
@@ -423,9 +423,9 @@ class SunspotMatchersTest < Test::Unit::TestCase
       order_by :average_rating, :asc
       order_by :random
     end
-    assert_has_no_search_params Sunspot.session, :order_by, Proc.new {
+    assert_has_no_search_params Sunspot.session, :order_by do
       order_by :average_rating, :asc
-    }
+    end
   end
 
   def test_order_by_matcher_with_score
@@ -433,10 +433,10 @@ class SunspotMatchersTest < Test::Unit::TestCase
       order_by :average_rating, :asc
       order_by :score
     end
-    assert_has_search_params Sunspot.session, :order_by, Proc.new {
+    assert_has_search_params Sunspot.session, :order_by do
       order_by :average_rating, :asc
       order_by :score
-    }
+    end
   end
 
   def test_order_by_matcher_doesnt_match_without_score
@@ -444,9 +444,9 @@ class SunspotMatchersTest < Test::Unit::TestCase
       order_by :average_rating, :asc
       order_by :score
     end
-    assert_has_no_search_params Sunspot.session, :order_by, Proc.new {
+    assert_has_no_search_params Sunspot.session, :order_by do
       order_by :average_rating, :asc
-    }
+    end
   end
 
   def test_order_by_matcher_respects_any_param_on_direction
@@ -512,10 +512,10 @@ class SunspotMatchersTest < Test::Unit::TestCase
       category_filter = with(:category_ids, 2)
       facet(:category_ids, :exclude => category_filter)
     end
-    assert_has_search_params Sunspot.session, :facet, Proc.new {
+    assert_has_search_params Sunspot.session, :facet do
       category_filter = with(:category_ids, 2)
       facet(:category_ids, :exclude => category_filter)
-    }
+    end
   end
 
   def test_query_facet_matcher_matches
@@ -529,7 +529,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
         end
       end
     end
-    assert_has_search_params Sunspot.session, :facet, Proc.new {
+    assert_has_search_params Sunspot.session, :facet do
       facet(:average_rating) do
         row(1.0..2.0) do
           with(:average_rating, 1.0..2.0)
@@ -538,7 +538,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
           with(:average_rating, 2.0..3.0)
         end
       end
-    }
+    end
   end
 
   def test_query_facet_matcher_doesnt_match_missing_facet
@@ -549,7 +549,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
         end
       end
     end
-    assert_has_no_search_params Sunspot.session, :facet, Proc.new {
+    assert_has_no_search_params Sunspot.session, :facet do
       facet(:average_rating) do
         row(1.0..2.0) do
           with(:average_rating, 1.0..2.0)
@@ -558,7 +558,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
           with(:average_rating, 2.0..3.0)
         end
       end
-    }
+    end
   end
 
   def test_query_facet_matcher_doesnt_match_different_query
@@ -572,7 +572,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
         end
       end
     end
-    assert_has_no_search_params Sunspot.session, :facet, Proc.new {
+    assert_has_no_search_params Sunspot.session, :facet do
       facet(:average_rating) do
         row(1.0..2.0) do
           with(:average_rating, 1.0..2.0)
@@ -581,7 +581,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
           with(:average_rating, 2.0..4.0)
         end
       end
-    }
+    end
   end
 
   # 'boost' matcher
@@ -592,11 +592,11 @@ class SunspotMatchersTest < Test::Unit::TestCase
         boost_fields :body => 2.0
       end
     end
-    assert_has_search_params Sunspot.session, :boost, Proc.new {
+    assert_has_search_params Sunspot.session, :boost do
       keywords 'great pizza' do
         boost_fields :body => 2.0
       end
-    }
+    end
   end
 
   def test_boost_matcher_doesnt_match_on_boost_mismatch
@@ -605,11 +605,11 @@ class SunspotMatchersTest < Test::Unit::TestCase
         boost_fields :body => 2.0
       end
     end
-    assert_has_no_search_params Sunspot.session, :boost, Proc.new {
+    assert_has_no_search_params Sunspot.session, :boost do
       keywords 'great pizza' do
         boost_fields :body => 3.0
       end
-    }
+    end
   end
 
   def test_boost_matcher_matches_boost_query
@@ -620,13 +620,13 @@ class SunspotMatchersTest < Test::Unit::TestCase
         end
       end
     end
-    assert_has_search_params Sunspot.session, :boost, Proc.new {
+    assert_has_search_params Sunspot.session, :boost do
       keywords 'great pizza' do
         boost(2.0) do
           with :blog_id, 4
         end
       end
-    }
+    end
   end
 
   def test_boost_matcher_doesnt_match_on_boost_query_mismatch
@@ -637,13 +637,13 @@ class SunspotMatchersTest < Test::Unit::TestCase
         end
       end
     end
-    assert_has_no_search_params Sunspot.session, :boost, Proc.new {
+    assert_has_no_search_params Sunspot.session, :boost do
       keywords 'great pizza' do
         boost(2.0) do
           with :blog_id, 5
         end
       end
-    }
+    end
   end
 
   def test_boost_matcher_matches_boost_function
@@ -652,11 +652,11 @@ class SunspotMatchersTest < Test::Unit::TestCase
         boost(function { sum(:average_rating, product(:popularity, 10)) })
       end
     end
-    assert_has_search_params Sunspot.session, :boost, Proc.new {
+    assert_has_search_params Sunspot.session, :boost do
       keywords 'great pizza' do
         boost(function { sum(:average_rating, product(:popularity, 10)) })
       end
-    }
+    end
   end
 
   def test_boost_matcher_doesnt_match_on_boost_function_mismatch
@@ -665,11 +665,11 @@ class SunspotMatchersTest < Test::Unit::TestCase
         boost(function { sum(:average_rating, product(:popularity, 10)) })
       end
     end
-    assert_has_no_search_params Sunspot.session, :boost, Proc.new {
+    assert_has_no_search_params Sunspot.session, :boost do
       keywords 'great pizza' do
         boost(function { sum(:average_rating, product(:popularity, 42)) })
       end
-    }
+    end
   end
 
   # 'be a search for'

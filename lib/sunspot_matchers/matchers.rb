@@ -123,9 +123,9 @@ module SunspotMatchers
   end
 
   class HaveSearchParams
-    def initialize(method, *args)
+    def initialize(method, *args, &block)
       @method = method
-      @args = args
+      @args = [*args, block].compact
     end
 
     def matches?(actual)
@@ -164,8 +164,8 @@ module SunspotMatchers
     end
   end
 
-  def have_search_params(method, *args)
-    HaveSearchParams.new(method, *args)
+  def have_search_params(method, *args, &block)
+    HaveSearchParams.new(method, *args, &block)
   end
 
   class WithMatcher < BaseMatcher

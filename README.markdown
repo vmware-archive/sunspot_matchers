@@ -70,10 +70,14 @@ have a dozen `with` restrictions on a search and still write an expectation on a
 
 Negative expectations also work correctly.  `should_not` will fail if the search actually includes the expectation.
 
-With all matchers, you can specify a `Proc` as the second argument, and perform multi statement expectations inside the
-Proc.  Keep in mind, that only the expectation type specified in the first argument will actually be checked.  So if
-you specify `keywords` and `with` restrictions in the same Proc, but you said `have_search_params(:keywords, ...`
+With all matchers, you can pass a block and perform multi statement expectations inside the
+block.  Keep in mind, that only the expectation type specified as the argument will actually be checked.  So if
+you specify `keywords` and `with` restrictions in the same block, but you said `have_search_params(:keywords, ...`
 the `with` restrictions are simply ignored.
+
+Without creative usage of parentheses you can not use do...end blocks to pass multi statement expectations to the matcher
+though.  Because do...end have such a low binding precedent, the block is passed to the wrong method.  Curly syntax blocks
+will work though {...}, or you can pass a Proc as the last argument.
 
 ### wildcard matching
 
@@ -109,7 +113,7 @@ You can match against a with restriction:
 
     Sunspot.session.should have_search_params(:with, :author_name, 'Mark Twain')
 
-Complex conditions can be matched by using a Proc instead of a value.  Be aware that order does matter, not for
+Complex conditions can be matched by using a block instead of a value.  Be aware that order does matter, not for
 the actual results that would come out of Solr, but the matcher will fail of the order of `with` restrictions is
 different.
 
@@ -120,12 +124,12 @@ different.
       end
     end
 
-    Sunspot.session.should have_search_params(:with, Proc.new {
+    Sunspot.session.should have_search_params(:with) {
       any_of do
         with :category_ids, 1
         with :category_ids, 2
       end
-    })
+    }
 
 ### :without
 
@@ -149,7 +153,7 @@ You can also specify only page or per_page, both are not required.
 
 ### :order_by
 
-Expectations on multiple orderings are supported using using the Proc format mentioned above.
+Expectations on multiple orderings are supported using using the block format mentioned above.
 
     Sunspot.search(Post) do
       order_by :published_at, :desc
@@ -174,10 +178,10 @@ Faceting where a query is excluded:
       facet(:category_ids, :exclude => category_filter)
     end
 
-    Sunspot.session.should have_search_params(:facet, Proc.new {
+    Sunspot.session.should have_search_params(:facet) {
       category_filter = with(:category_ids, 2)
       facet(:category_ids, :exclude => category_filter)
-    })
+    }
 
 Query faceting:
 
@@ -192,7 +196,7 @@ Query faceting:
       end
     end
     
-    Sunspot.session.should have_search_params(:facet, Proc.new {
+    Sunspot.session.should have_search_params(:facet) {
       facet(:average_rating) do
         row(1.0..2.0) do
           with(:average_rating, 1.0..2.0)
@@ -201,7 +205,7 @@ Query faceting:
           with(:average_rating, 2.0..3.0)
         end
       end
-    })
+    }
 
 ### :boost
 
@@ -213,11 +217,11 @@ Field boost matching:
       end
     end
 
-    Sunspot.session.should have_search_params(:boost, Proc.new {
+    Sunspot.session.should have_search_params(:boost) {
       keywords 'great pizza' do
         boost_fields :body => 2.0
       end
-    })
+    }
 
 Boost query matching:
 
@@ -229,13 +233,13 @@ Boost query matching:
       end
     end
 
-    Sunspot.session.should have_search_params(:boost, Proc.new {
+    Sunspot.session.should have_search_params(:boost) {
       keywords 'great pizza' do
         boost(2.0) do
           with :blog_id, 4
         end
       end
-    })
+    }
 
 Boost function matching:
 
@@ -245,11 +249,11 @@ Boost function matching:
       end
     end
 
-    Sunspot.session.should have_search_params(:boost, Proc.new {
+    Sunspot.session.should have_search_params(:boost) {
       keywords 'great pizza' do
         boost(function { sum(:average_rating, product(:popularity, 10)) })
       end
-    })
+    }
 
 # Assertions
 
@@ -270,7 +274,7 @@ These are used like:
     Sunspot.search(Post) do
       with :category_ids, 1..3
     end
-    assert_has_search_params Sunspot.session, :with, Proc.new {
+    assert_has_search_params Sunspot.session, :with {
       with :category_ids, 1..3
     }
     
