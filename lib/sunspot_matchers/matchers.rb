@@ -327,7 +327,7 @@ module SunspotMatchers
     def matches?(klass_or_object)
       @klass = klass_or_object.class.name == 'Class' ? klass_or_object : klass_or_object.class
       @sunspot = Sunspot::Setup.for(@klass)
-      (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).uniq.include?(@field)
+      (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).include?(@field)
     end
 
     def failure_message_for_should

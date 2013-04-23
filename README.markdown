@@ -60,6 +60,12 @@ If you want to verify that a model has a searchable field, you can use this matc
 
 `Post.should have_searchable_field(:name)`
 
+You can also use the shorthand syntax:
+
+    describe User do
+      it { should have_searchable_field(:name) }
+    end
+
 ## have_search_params
 
 This is where the bulk of the functionality lies.  There are seven types of search matches you can perform: `keywords` or `fulltext`,

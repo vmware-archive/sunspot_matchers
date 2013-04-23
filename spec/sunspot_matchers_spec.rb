@@ -2,9 +2,12 @@ require 'sunspot'
 require 'sunspot_matchers'
 require 'rspec'
 
-class Post; end
-class Blog; end
-class Person; end
+class Post;
+end
+class Blog;
+end
+class Person;
+end
 
 Sunspot.setup(Post) do
   text :body
@@ -24,7 +27,7 @@ end
 
 describe "Sunspot Matchers" do
   include SunspotMatchers
-  
+
   before do
     Sunspot.session = SunspotMatchers::SunspotSessionSpy.new(Sunspot.session)
   end
@@ -151,10 +154,10 @@ describe "Sunspot Matchers" do
 
       it "should match any_of" do
         Sunspot.search(Post) do
-          with(:category_ids).any_of [1,2]
+          with(:category_ids).any_of [1, 2]
         end
         Sunspot.session.should have_search_params(:with) {
-          with(:category_ids).any_of [1,2]
+          with(:category_ids).any_of [1, 2]
         }
       end
 
@@ -278,10 +281,10 @@ describe "Sunspot Matchers" do
 
       it "should match any_of" do
         Sunspot.search(Post) do
-          without(:category_ids).any_of [1,2]
+          without(:category_ids).any_of [1, 2]
         end
         Sunspot.session.should have_search_params(:without) {
-          without(:category_ids).any_of [1,2]
+          without(:category_ids).any_of [1, 2]
         }
       end
 
@@ -745,8 +748,16 @@ describe "Sunspot Matchers" do
   end
 
   describe "have_searchable_field" do
+    context "it works with instances as well as classes" do
+      describe Post do
+        it { should have_searchable_field(:body) }
+      end
+    end
+
     it "should succeed if the model has the given field" do
       Post.should have_searchable_field(:body)
+      Post.should have_searchable_field(:author_name)
+      Post.should have_searchable_field(:blog_id)
     end
 
     it "should fail if the model does not have the given field" do
