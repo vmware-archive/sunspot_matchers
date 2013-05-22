@@ -330,6 +330,10 @@ module SunspotMatchers
       (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).include?(@field)
     end
 
+    def description
+      "should have searchable field #{@field}"
+    end
+
     def failure_message_for_should
       "expected class: #{@klass} to have searchable field: #{@field}"
     end
