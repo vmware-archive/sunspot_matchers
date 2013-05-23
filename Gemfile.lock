@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    sunspot_matchers (2.0.0)
+    sunspot_matchers (2.0.0.1)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     builder (3.2.0)
     diff-lcs (1.1.2)
