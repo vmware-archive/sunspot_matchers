@@ -484,7 +484,7 @@ class SunspotMatchersTest < Test::Unit::TestCase
     assert_has_search_params Sunspot.session, :order_by, any_param, any_param
   end
 
-  def test_order_by_matcher_respects_any_param_on_field_and_dir
+  def test_order_by_matcher_doesnt_respect_any_param_on_field_and_dir
     Sunspot.search(Post) do
       keywords 'great pizza'
     end
