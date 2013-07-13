@@ -327,7 +327,7 @@ module SunspotMatchers
     def matches?(klass_or_object)
       @klass = klass_or_object.class.name == 'Class' ? klass_or_object : klass_or_object.class
       @sunspot = Sunspot::Setup.for(@klass)
-      (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).include?(@field)
+      @sunspot && (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).include?(@field)
     end
 
     def description
@@ -335,7 +335,8 @@ module SunspotMatchers
     end
 
     def failure_message_for_should
-      "expected class: #{@klass} to have searchable field: #{@field}"
+      message = "expected class: #{@klass} to have searchable field: #{@field}"
+      message << ", but Sunspot was not configured on #{@klass}" unless @sunspot
     end
 
     def failure_message_for_should_not
