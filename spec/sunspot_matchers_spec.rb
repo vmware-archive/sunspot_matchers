@@ -763,5 +763,9 @@ describe "Sunspot Matchers" do
     it "should fail if the model does not have the given field" do
       Post.should_not have_searchable_field(:potato)
     end
+
+    it "should fail if the model does not have any searchable fields" do
+      Person.should_not have_searchable_field(:name)
+    end
   end
 end
