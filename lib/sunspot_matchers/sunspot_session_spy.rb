@@ -18,6 +18,14 @@ module SunspotMatchers
     attr_accessor :searches
 
     def initialize(original_session)
+      # Support Sunspot random field in test -- Sunspot originally generate a random number for the field
+      # Only patch method if SunspotSessionSpy is initialized to prevent poisoning class simply by being included in Gemfile.
+      Sunspot::Query::Sort::RandomSort.class_eval do
+        define_method :to_param do
+          "random #{direction_for_solr}"
+        end
+      end
+
       @searches = []
       @original_session = original_session
       @config = Sunspot::Configuration.build
@@ -101,12 +109,5 @@ module SunspotMatchers
         Sunspot::CompositeSetup.for(types)
       end
     end
-  end
-end
-
-# Support Sunspot random field in test -- Sunspot originally generate a random number for the field
-class Sunspot::Query::Sort::RandomSort < Sunspot::Query::Sort::Abstract
-  def to_param
-    "random #{direction_for_solr}"
   end
 end
