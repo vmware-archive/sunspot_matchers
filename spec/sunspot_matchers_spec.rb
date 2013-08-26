@@ -514,6 +514,14 @@ describe "Sunspot Matchers" do
           Sunspot.session.should have_search_params(:facet, :category_ids)
         end
 
+        it "should match if multiple facet exists" do
+          Sunspot.search(Post) do
+            facet :category_ids
+            facet :blog_id
+          end
+          Sunspot.session.should have_search_params(:facet, :category_ids)
+        end
+
         it "should not match if facet does not exist" do
           Sunspot.search(Post) do
             paginate :page => 5, :per_page => 15
@@ -552,6 +560,32 @@ describe "Sunspot Matchers" do
               end
               row(2.0..3.0) do
                 with(:average_rating, 2.0..3.0)
+              end
+            end
+          }
+        end
+
+        it "should match if multiple facet exists, but the facet you are matching on only has a single row" do
+          Sunspot.search(Post) do
+            facet(:average_rating) do
+              row(1.0..2.0) do
+                with(:average_rating, 1.0..2.0)
+              end
+            end
+
+            facet(:popularity) do
+              row(1..5) do
+                with(:popularity, 1..5)
+              end
+              row(6..10) do
+                with(:popularity, 6..10)
+              end
+            end
+          end
+          Sunspot.session.should have_search_params(:facet) {
+            facet(:average_rating) do
+              row(1.0..2.0) do
+                with(:average_rating, 1.0..2.0)
               end
             end
           }

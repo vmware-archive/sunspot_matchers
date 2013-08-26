@@ -103,11 +103,12 @@ module SunspotMatchers
     end
 
     def compare_multi_value(actual, comparison)
+      actual = [actual] unless actual.is_a?(Array)
+      comparison = [comparison] unless comparison.is_a?(Array)
       filter_values(comparison).reject do |value|
         next false unless actual
         value_matcher = Regexp.new(Regexp.escape(value))
-        cmp_value = actual.is_a?(String) ? actual.chars : actual
-        cmp_value.any?{ |actual_value| actual_value =~ value_matcher }
+        actual.any?{ |actual_value| actual_value =~ value_matcher }
       end
     end
 
