@@ -350,6 +350,12 @@ module SunspotMatchers
   end
 end
 
+class AnyParam < String
+  def utc
+    Time.now.utc
+  end
+end
+
 def any_param
-  "ANY_PARAM"
+  AnyParam.new("ANY_PARAM")
 end
