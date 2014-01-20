@@ -204,6 +204,13 @@ describe "Sunspot Matchers" do
         Sunspot.session.should have_search_params(:with, :blog_id, any_param)
       end
 
+      it "should work with a time attribute and any_param match" do
+        Sunspot.search(Post) do
+          with :published_at, 'July 1st, 2009'
+        end
+        Sunspot.session.should have_search_params(:with, :published_at, any_param)
+      end
+
       it "should work with any_param negative match no with at all" do
         Sunspot.search(Post) do
           keywords 'great pizza'
