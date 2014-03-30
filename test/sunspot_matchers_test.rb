@@ -89,6 +89,13 @@ class SunspotMatchersTest < Test::Unit::TestCase
     assert_has_no_search_params Sunspot.session, :keywords, any_param
   end
 
+  def test_match_fulltext
+    Sunspot.search(Post) do
+      fulltext 'great pizza'
+    end
+    assert_has_search_params Sunspot.session, :fulltext, 'great pizza'
+  end
+
   def test_with_matcher_matches
     Sunspot.search(Post) do
       with :author_name, 'Mark Twain'
