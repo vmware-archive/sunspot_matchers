@@ -4,34 +4,34 @@ require File.expand_path('../matchers', __FILE__)
 require File.expand_path('../sunspot_session_spy', __FILE__)
 module SunspotMatchers
   class HaveSearchParamsForSession
-      include Test::Unit::Assertions
+    include Test::Unit::Assertions
 
-      def initialize(session, method, *args, &block)
-        @session = session
-        @method = method
-        @args = [*args, block].compact
-      end
-
-      def get_matcher
-        matcher_class = case @method
-          when :with
-            WithMatcher
-          when :without
-            WithoutMatcher
-          when :keywords
-            KeywordsMatcher
-          when :boost
-            BoostMatcher
-          when :facet
-            FacetMatcher
-          when :order_by
-            OrderByMatcher
-          when :paginate
-            PaginationMatcher
-        end
-        matcher_class.new(@session, @args)
-      end
+    def initialize(session, method, *args, &block)
+      @session = session
+      @method = method
+      @args = [*args, block].compact
     end
+
+    def get_matcher
+      matcher_class = case @method
+        when :with
+          WithMatcher
+        when :without
+          WithoutMatcher
+        when :keywords, :fulltext
+          KeywordsMatcher
+        when :boost
+          BoostMatcher
+        when :facet
+          FacetMatcher
+        when :order_by
+          OrderByMatcher
+        when :paginate
+          PaginationMatcher
+      end
+      matcher_class.new(@session, @args)
+    end
+  end
 
   
   class BeASearchForSession
