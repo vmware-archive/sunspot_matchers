@@ -218,6 +218,14 @@ describe "Sunspot Matchers" do
         Sunspot.session.should_not have_search_params(:with, :blog_id, any_param)
       end
 
+      it "should work with any_param negative match when without exists" do
+        Sunspot.search(Post) do
+          without :blog_id, 4
+          without :blog_id, 5
+        end
+        Sunspot.session.should_not have_search_params(:with, :blog_id, any_param)
+      end
+
       it "should work with any_param negative match different field with query" do
         Sunspot.search(Post) do
           with :category_ids, 7
@@ -341,6 +349,13 @@ describe "Sunspot Matchers" do
       it "should work with any_param negative match no without at all" do
         Sunspot.search(Post) do
           keywords 'great pizza'
+        end
+        Sunspot.session.should_not have_search_params(:without, :blog_id, any_param)
+      end
+
+      it "should work with any_param negative match when with exists" do
+        Sunspot.search(Post) do
+          with :blog_id, 4
         end
         Sunspot.session.should_not have_search_params(:without, :blog_id, any_param)
       end

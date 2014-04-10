@@ -107,7 +107,7 @@ module SunspotMatchers
       comparison = [comparison] unless comparison.is_a?(Array)
       filter_values(comparison).reject do |value|
         next false unless actual
-        value_matcher = Regexp.new(Regexp.escape(value))
+        value_matcher = Regexp.new("^#{Regexp.escape(value)}")
         actual.any?{ |actual_value| actual_value =~ value_matcher }
       end
     end
