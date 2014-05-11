@@ -1,5 +1,6 @@
 require 'sunspot'
 require 'sunspot_matchers'
+require 'rspec/its'
 
 describe SunspotMatchers::HaveSearchableField do
   subject do
@@ -11,7 +12,7 @@ describe SunspotMatchers::HaveSearchableField do
   context "when a class has no searchable fields" do
     let(:klass) { NotALotGoingOn = Class.new }
 
-    its(:failure_message_for_should) { should =~ /Sunspot was not configured/ }
+    its(:failure_message) { should =~ /Sunspot was not configured/ }
   end
 
   context "when a class has an unexpected searchable field" do
@@ -20,6 +21,6 @@ describe SunspotMatchers::HaveSearchableField do
       Sunspot.setup(klass) { text :parachute }
     end
 
-    its(:failure_message_for_should) { should_not =~ /Sunspot was not configured/ }
+    its(:failure_message) { should_not =~ /Sunspot was not configured/ }
   end
 end

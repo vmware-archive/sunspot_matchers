@@ -15,7 +15,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
 
   s.add_development_dependency "bundler", ">= 1.0.0"
-  s.add_development_dependency "rspec", "~> 2.4.0"
+  s.add_development_dependency "rspec", "~> 3.0.0.beta2"
+  s.add_development_dependency "rspec-its"
   s.add_development_dependency "sunspot", "~> 2.1.0"
   s.add_development_dependency "rake"
 
