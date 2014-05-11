@@ -135,11 +135,11 @@ module SunspotMatchers
       @matcher.match?
     end
 
-    def failure_message_for_should
+    def failure_message
       @matcher.missing_param_error_message
     end
 
-    def failure_message_for_should_not
+    def failure_message_when_negated
       @matcher.unexpected_match_error_message
     end
 
@@ -306,11 +306,11 @@ module SunspotMatchers
       search_tuple.first
     end
 
-    def failure_message_for_should
+    def failure_message
       "expected search class: #{search_types.join(' and ')} to match expected class: #{@expected_class}"
     end
 
-    def failure_message_for_should_not
+    def failure_message_when_negated
       "expected search class: #{search_types.join(' and ')} NOT to match expected class: #{@expected_class}"
     end
   end
@@ -335,12 +335,12 @@ module SunspotMatchers
       "should have searchable field #{@field}"
     end
 
-    def failure_message_for_should
+    def failure_message
       message = "expected class: #{@klass} to have searchable field: #{@field}"
       message << ", but Sunspot was not configured on #{@klass}" unless @sunspot
     end
 
-    def failure_message_for_should_not
+    def failure_message_when_negated
       "expected class: #{@klass} NOT to have searchable field: #{@field}"
     end
   end
