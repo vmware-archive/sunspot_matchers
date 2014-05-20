@@ -13,7 +13,7 @@ describe SunspotMatchers::HaveSearchableField do
     let(:klass) { NotALotGoingOn = Class.new }
 
     it "gives Sunspot configuration error" do
-      expect(matcher.failure_message_for_should).to match(/Sunspot was not configured/)
+      expect(matcher.failure_message).to match(/Sunspot was not configured/)
     end
   end
 
@@ -24,7 +24,7 @@ describe SunspotMatchers::HaveSearchableField do
     end
 
     it "does not have an error" do
-      expect(matcher.failure_message_for_should).to be_nil
+      expect(matcher.failure_message).to be_nil
     end
   end
 end
