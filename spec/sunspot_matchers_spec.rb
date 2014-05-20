@@ -33,142 +33,142 @@ describe "Sunspot Matchers" do
   end
 
   describe "have_search_params" do
-    it "should allow you to specify your search on multiple models" do
+    it "allows you to specify your search on multiple models" do
       Sunspot.search([Post, Blog]) do
         keywords 'great pizza'
       end
-      Sunspot.session.should have_search_params(:keywords, 'great pizza')
+      expect(Sunspot.session).to have_search_params(:keywords, 'great pizza')
     end
 
-    it "should allow you to specify your search" do
+    it "allows you to specify your search" do
       Sunspot.search(Post) do
         keywords 'great pizza'
       end
       Sunspot.search(Blog) do
         keywords 'bad pizza'
       end
-      Sunspot.session.searches.first.should have_search_params(:keywords, 'great pizza')
-      Sunspot.session.searches.last.should have_search_params(:keywords, 'bad pizza')
+      expect(Sunspot.session.searches.first).to have_search_params(:keywords, 'great pizza')
+      expect(Sunspot.session.searches.last).to have_search_params(:keywords, 'bad pizza')
     end
 
     describe "keyword/fulltext matcher" do
-      it "should match if search matches" do
+      it "matches if search matches" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
-        Sunspot.session.should have_search_params(:keywords, 'great pizza')
+        expect(Sunspot.session).to have_search_params(:keywords, 'great pizza')
       end
 
-      it "should work with fulltext also" do
+      it "works with fulltext also" do
         Sunspot.search(Post) do
           fulltext 'great pizza'
         end
-        Sunspot.session.should have_search_params(:fulltext, 'great pizza')
+        expect(Sunspot.session).to have_search_params(:fulltext, 'great pizza')
       end
 
-      it "should not match if search does not match" do
+      it "does not match if search does not match" do
         Sunspot.search(Post) do
           keywords 'terrible pizza'
         end
-        Sunspot.session.should_not have_search_params(:keywords, 'great pizza')
+        expect(Sunspot.session).to_not have_search_params(:keywords, 'great pizza')
       end
 
-      it "should match for multiple keywords" do
+      it "matches for multiple keywords" do
         Sunspot.search(Post) do
           keywords 'great pizza'
           keywords 'terrible pizza'
         end
-        Sunspot.session.should have_search_params(:keywords) {
+        expect(Sunspot.session).to have_search_params(:keywords) {
           keywords 'great pizza'
           keywords 'terrible pizza'
         }
       end
 
-      it "should work with any_param match" do
+      it "works with any_param match" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
-        Sunspot.session.should have_search_params(:keywords, any_param)
+        expect(Sunspot.session).to have_search_params(:keywords, any_param)
       end
 
-      it "should work with any_param negative match" do
+      it "works with any_param negative match" do
         Sunspot.search(Post) do
           with :blog_id, 4
         end
-        Sunspot.session.should_not have_search_params(:keywords, any_param)
+        expect(Sunspot.session).to_not have_search_params(:keywords, any_param)
       end
     end
 
     describe "with matcher" do
-      it "should match if search matches" do
+      it "matches if search matches" do
         Sunspot.search(Post) do
           with :author_name, 'Mark Twain'
         end
-        Sunspot.session.should have_search_params(:with, :author_name, 'Mark Twain')
+        expect(Sunspot.session).to have_search_params(:with, :author_name, 'Mark Twain')
       end
 
-      it "should not match if search does not match" do
+      it "does not match if search does not match" do
         Sunspot.search(Post) do
           with :author_name, 'Mark Twain'
         end
-        Sunspot.session.should_not have_search_params(:with, :author_name, 'John Twain')
+        expect(Sunspot.session).to_not have_search_params(:with, :author_name, 'John Twain')
       end
 
-      it "should match for multiple with" do
+      it "matches for multiple with" do
         Sunspot.search(Post) do
           with :author_name, 'Mark Twain'
           with :author_name, 'John Twain'
         end
-        Sunspot.session.should have_search_params(:with) {
+        expect(Sunspot.session).to have_search_params(:with) {
           with :author_name, 'Mark Twain'
           with :author_name, 'John Twain'
         }
       end
 
-      it "should match for greater_than" do
+      it "matches for greater_than" do
         Sunspot.search(Post) do
           with(:category_ids).greater_than(1)
         end
-        Sunspot.session.should have_search_params(:with) {
+        expect(Sunspot.session).to have_search_params(:with) {
           with(:category_ids).greater_than(1)
         }
       end
 
-      it "should match for less_than" do
+      it "matches for less_than" do
         Sunspot.search(Post) do
           with(:category_ids).less_than(1)
         end
-        Sunspot.session.should have_search_params(:with) {
+        expect(Sunspot.session).to have_search_params(:with) {
           with(:category_ids).less_than(1)
         }
       end
 
-      it "should match for range" do
+      it "matches for range" do
         Sunspot.search(Post) do
           with :category_ids, 1..3
         end
-        Sunspot.session.should have_search_params(:with) {
+        expect(Sunspot.session).to have_search_params(:with) {
           with :category_ids, 1..3
         }
       end
 
-      it "should match any_of" do
+      it "matches any_of" do
         Sunspot.search(Post) do
           with(:category_ids).any_of [1, 2]
         end
-        Sunspot.session.should have_search_params(:with) {
+        expect(Sunspot.session).to have_search_params(:with) {
           with(:category_ids).any_of [1, 2]
         }
       end
 
-      it "should match any_of multiline" do
+      it "matches any_of multiline" do
         Sunspot.search(Post) do
           any_of do
             with :category_ids, 1
             with :category_ids, 2
           end
         end
-        Sunspot.session.should have_search_params(:with) {
+        expect(Sunspot.session).to have_search_params(:with) {
           any_of do
             with :category_ids, 1
             with :category_ids, 2
@@ -176,7 +176,7 @@ describe "Sunspot Matchers" do
         }
       end
 
-      it "should match any_of and all_of" do
+      it "matches any_of and all_of" do
         Sunspot.search(Post) do
           any_of do
             with :category_ids, 1
@@ -186,7 +186,7 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should have_search_params(:with) {
+        expect(Sunspot.session).to have_search_params(:with) {
           any_of do
             with :category_ids, 1
             all_of do
@@ -197,120 +197,120 @@ describe "Sunspot Matchers" do
         }
       end
 
-      it "should work with any_param match" do
+      it "works with any_param match" do
         Sunspot.search(Post) do
           with :blog_id, 4
         end
-        Sunspot.session.should have_search_params(:with, :blog_id, any_param)
+        expect(Sunspot.session).to have_search_params(:with, :blog_id, any_param)
       end
 
-      it "should work with a time attribute and any_param match" do
+      it "works with a time attribute and any_param match" do
         Sunspot.search(Post) do
           with :published_at, 'July 1st, 2009'
         end
-        Sunspot.session.should have_search_params(:with, :published_at, any_param)
+        expect(Sunspot.session).to have_search_params(:with, :published_at, any_param)
       end
 
-      it "should work with any_param negative match no with at all" do
+      it "works with any_param negative match no with at all" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
-        Sunspot.session.should_not have_search_params(:with, :blog_id, any_param)
+        expect(Sunspot.session).to_not have_search_params(:with, :blog_id, any_param)
       end
 
-      it "should work with any_param negative match when without exists" do
+      it "works with any_param negative match when without exists" do
         Sunspot.search(Post) do
           without :blog_id, 4
           without :blog_id, 5
         end
-        Sunspot.session.should_not have_search_params(:with, :blog_id, any_param)
+        expect(Sunspot.session).to_not have_search_params(:with, :blog_id, any_param)
       end
 
-      it "should work with any_param negative match different field with query" do
+      it "works with any_param negative match different field with query" do
         Sunspot.search(Post) do
           with :category_ids, 7
         end
-        Sunspot.session.should_not have_search_params(:with, :blog_id, any_param)
+        expect(Sunspot.session).to_not have_search_params(:with, :blog_id, any_param)
       end
     end
 
     describe "without matcher" do
-      it "should match if search matches" do
+      it "matches if search matches" do
         Sunspot.search(Post) do
           without :author_name, 'Mark Twain'
         end
-        Sunspot.session.should have_search_params(:without, :author_name, 'Mark Twain')
+        expect(Sunspot.session).to have_search_params(:without, :author_name, 'Mark Twain')
       end
 
-      it "should not match if search does not match" do
+      it "does not match if search does not match" do
         Sunspot.search(Post) do
           without :author_name, 'Mark Twain'
         end
-        Sunspot.session.should_not have_search_params(:without, :author_name, 'John Twain')
+        expect(Sunspot.session).to_not have_search_params(:without, :author_name, 'John Twain')
       end
 
-      it "should not match a with search" do
+      it "does not match a with search" do
         Sunspot.search(Post) do
           with :author_name, 'Mark Twain'
         end
-        Sunspot.session.should_not have_search_params(:without, :author_name, 'Mark Twain')
+        expect(Sunspot.session).to_not have_search_params(:without, :author_name, 'Mark Twain')
       end
 
-      it "should match for multiple without" do
+      it "matches for multiple without" do
         Sunspot.search(Post) do
           without :author_name, 'Mark Twain'
           without :author_name, 'John Twain'
         end
-        Sunspot.session.should have_search_params(:without) {
+        expect(Sunspot.session).to have_search_params(:without) {
           without :author_name, 'Mark Twain'
           without :author_name, 'John Twain'
         }
       end
 
-      it "should match for greater_than" do
+      it "matches for greater_than" do
         Sunspot.search(Post) do
           without(:category_ids).greater_than(1)
         end
-        Sunspot.session.should have_search_params(:without) {
+        expect(Sunspot.session).to have_search_params(:without) {
           without(:category_ids).greater_than(1)
         }
       end
 
-      it "should match for less_than" do
+      it "matches for less_than" do
         Sunspot.search(Post) do
           without(:category_ids).less_than(1)
         end
-        Sunspot.session.should have_search_params(:without) {
+        expect(Sunspot.session).to have_search_params(:without) {
           without(:category_ids).less_than(1)
         }
       end
 
-      it "should match for range" do
+      it "matches for range" do
         Sunspot.search(Post) do
           without :category_ids, 1..3
         end
-        Sunspot.session.should have_search_params(:without) {
+        expect(Sunspot.session).to have_search_params(:without) {
           without :category_ids, 1..3
         }
       end
 
-      it "should match any_of" do
+      it "matches any_of" do
         Sunspot.search(Post) do
           without(:category_ids).any_of [1, 2]
         end
-        Sunspot.session.should have_search_params(:without) {
+        expect(Sunspot.session).to have_search_params(:without) {
           without(:category_ids).any_of [1, 2]
         }
       end
 
-      it "should match any_of multiline" do
+      it "matches any_of multiline" do
         Sunspot.search(Post) do
           any_of do
             without :category_ids, 1
             without :category_ids, 2
           end
         end
-        Sunspot.session.should have_search_params(:without) {
+        expect(Sunspot.session).to have_search_params(:without) {
           any_of do
             without :category_ids, 1
             without :category_ids, 2
@@ -318,7 +318,7 @@ describe "Sunspot Matchers" do
         }
       end
 
-      it "should match any_of and all_of" do
+      it "matches any_of and all_of" do
         Sunspot.search(Post) do
           any_of do
             without :category_ids, 1
@@ -328,7 +328,7 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should have_search_params(:without) {
+        expect(Sunspot.session).to have_search_params(:without) {
           any_of do
             without :category_ids, 1
             all_of do
@@ -339,224 +339,224 @@ describe "Sunspot Matchers" do
         }
       end
 
-      it "should work with any_param match" do
+      it "works with any_param match" do
         Sunspot.search(Post) do
           without :blog_id, 4
         end
-        Sunspot.session.should have_search_params(:without, :blog_id, any_param)
+        expect(Sunspot.session).to have_search_params(:without, :blog_id, any_param)
       end
 
-      it "should work with any_param negative match no without at all" do
+      it "works with any_param negative match no without at all" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
-        Sunspot.session.should_not have_search_params(:without, :blog_id, any_param)
+        expect(Sunspot.session).to_not have_search_params(:without, :blog_id, any_param)
       end
 
-      it "should work with any_param negative match when with exists" do
+      it "works with any_param negative match when with exists" do
         Sunspot.search(Post) do
           with :blog_id, 4
         end
-        Sunspot.session.should_not have_search_params(:without, :blog_id, any_param)
+        expect(Sunspot.session).to_not have_search_params(:without, :blog_id, any_param)
       end
 
-      it "should work with any_param negative match different field without query" do
+      it "works with any_param negative match different field without query" do
         Sunspot.search(Post) do
           without :category_ids, 4
         end
-        Sunspot.session.should_not have_search_params(:without, :blog_id, any_param)
+        expect(Sunspot.session).to_not have_search_params(:without, :blog_id, any_param)
       end
     end
 
     describe "paginate matcher" do
-      it "should match if search matches" do
+      it "matches if search matches" do
         Sunspot.search(Post) do
           paginate :page => 3, :per_page => 15
         end
-        Sunspot.session.should have_search_params(:paginate, :page => 3, :per_page => 15)
+        expect(Sunspot.session).to have_search_params(:paginate, :page => 3, :per_page => 15)
       end
 
-      it "should match if search matches, page only" do
+      it "matches if search matches, page only" do
         Sunspot.search(Post) do
           paginate :page => 3
         end
-        Sunspot.session.should have_search_params(:paginate, :page => 3)
+        expect(Sunspot.session).to have_search_params(:paginate, :page => 3)
       end
 
-      it "should match if search matches, per_page only" do
+      it "matches if search matches, per_page only" do
         Sunspot.search(Post) do
           paginate :per_page => 15
         end
-        Sunspot.session.should have_search_params(:paginate, :per_page => 15)
+        expect(Sunspot.session).to have_search_params(:paginate, :per_page => 15)
       end
 
-      it "should not match if per_page does not match" do
+      it "does not match if per_page does not match" do
         Sunspot.search(Post) do
           paginate :page => 3, :per_page => 30
         end
-        Sunspot.session.should_not have_search_params(:paginate, :page => 3, :per_page => 15)
+        expect(Sunspot.session).to_not have_search_params(:paginate, :page => 3, :per_page => 15)
       end
 
-      it "should not match if page does not match" do
+      it "does not match if page does not match" do
         Sunspot.search(Post) do
           paginate :page => 5, :per_page => 15
         end
-        Sunspot.session.should_not have_search_params(:paginate, :page => 3, :per_page => 15)
+        expect(Sunspot.session).to_not have_search_params(:paginate, :page => 3, :per_page => 15)
       end
     end
 
     describe "order_by matcher" do
-      it "should match if search matches" do
+      it "matches if search matches" do
         Sunspot.search(Post) do
           order_by :published_at, :desc
         end
-        Sunspot.session.should have_search_params(:order_by, :published_at, :desc)
+        expect(Sunspot.session).to have_search_params(:order_by, :published_at, :desc)
       end
 
-      it "should not match if search does not match" do
+      it "does not match if search does not match" do
         Sunspot.search(Post) do
           order_by :published_at, :asc
         end
-        Sunspot.session.should_not have_search_params(:order_by, :published_at, :desc)
+        expect(Sunspot.session).to_not have_search_params(:order_by, :published_at, :desc)
       end
 
-      it "should match for multiple orderings" do
+      it "matches for multiple orderings" do
         Sunspot.search(Post) do
           order_by :published_at, :asc
           order_by :average_rating, :asc
         end
-        Sunspot.session.should have_search_params(:order_by) {
+        expect(Sunspot.session).to have_search_params(:order_by) {
           order_by :published_at, :asc
           order_by :average_rating, :asc
         }
       end
 
-      it "should not match if multiple orderings are reversed" do
+      it "does not match if multiple orderings are reversed" do
         Sunspot.search(Post) do
           order_by :average_rating, :asc
           order_by :published_at, :asc
         end
-        Sunspot.session.should_not have_search_params(:order_by) {
+        expect(Sunspot.session).to_not have_search_params(:order_by) {
           order_by :published_at, :asc
           order_by :average_rating, :asc
         }
       end
 
-      it "should match when using random" do
+      it "matches when using random" do
         Sunspot.search(Post) do
           order_by :average_rating, :asc
           order_by :random
         end
-        Sunspot.session.should have_search_params(:order_by) {
+        expect(Sunspot.session).to have_search_params(:order_by) {
           order_by :average_rating, :asc
           order_by :random
         }
       end
 
-      it "should not match when random is missing" do
+      it "does not match when random is missing" do
         Sunspot.search(Post) do
           order_by :average_rating, :asc
           order_by :random
         end
-        Sunspot.session.should_not have_search_params(:order_by) {
+        expect(Sunspot.session).to_not have_search_params(:order_by) {
           order_by :average_rating, :asc
         }
       end
 
-      it "should match when using score" do
+      it "matches when using score" do
         Sunspot.search(Post) do
           order_by :average_rating, :asc
           order_by :score
         end
-        Sunspot.session.should have_search_params(:order_by) {
+        expect(Sunspot.session).to have_search_params(:order_by) {
           order_by :average_rating, :asc
           order_by :score
         }
       end
 
-      it "should not match when score is missing" do
+      it "does not match when score is missing" do
         Sunspot.search(Post) do
           order_by :average_rating, :asc
           order_by :score
         end
-        Sunspot.session.should_not have_search_params(:order_by) {
+        expect(Sunspot.session).to_not have_search_params(:order_by) {
           order_by :average_rating, :asc
         }
       end
 
-      it "should work with any_param match on direction" do
+      it "works with any_param match on direction" do
         Sunspot.search(Post) do
           order_by :average_rating, :asc
         end
-        Sunspot.session.should have_search_params(:order_by, :average_rating, any_param)
+        expect(Sunspot.session).to have_search_params(:order_by, :average_rating, any_param)
       end
 
-      it "should work with any_param match on field" do
+      it "works with any_param match on field" do
         Sunspot.search(Post) do
           order_by :average_rating, :asc
         end
-        Sunspot.session.should have_search_params(:order_by, any_param)
+        expect(Sunspot.session).to have_search_params(:order_by, any_param)
       end
 
-      it "should work with any_param negative match on direction" do
+      it "works with any_param negative match on direction" do
         Sunspot.search(Post) do
           order_by :score
         end
-        Sunspot.session.should_not have_search_params(:order_by, :average_rating, any_param)
+        expect(Sunspot.session).to_not have_search_params(:order_by, :average_rating, any_param)
       end
 
-      it "should work with any_param negative match on field" do
+      it "works with any_param negative match on field" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
-        Sunspot.session.should_not have_search_params(:order_by, any_param)
+        expect(Sunspot.session).to_not have_search_params(:order_by, any_param)
       end
 
-      it "should work with any_param match on field and direction" do
+      it "works with any_param match on field and direction" do
         Sunspot.search(Post) do
           order_by :score, :desc
         end
-        Sunspot.session.should have_search_params(:order_by, any_param, any_param)
+        expect(Sunspot.session).to have_search_params(:order_by, any_param, any_param)
       end
 
-      it "should work with any_param negative match on field and direction" do
+      it "works with any_param negative match on field and direction" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
-        Sunspot.session.should_not have_search_params(:order_by, any_param, any_param)
+        expect(Sunspot.session).to_not have_search_params(:order_by, any_param, any_param)
       end
     end
 
     describe "facet matcher" do
       describe "field facets" do
-        it "should match if facet exists" do
+        it "matches if facet exists" do
           Sunspot.search(Post) do
             facet :category_ids
           end
-          Sunspot.session.should have_search_params(:facet, :category_ids)
+          expect(Sunspot.session).to have_search_params(:facet, :category_ids)
         end
 
-        it "should match if multiple facet exists" do
+        it "matches if multiple facet exists" do
           Sunspot.search(Post) do
             facet :category_ids
             facet :blog_id
           end
-          Sunspot.session.should have_search_params(:facet, :category_ids)
+          expect(Sunspot.session).to have_search_params(:facet, :category_ids)
         end
 
-        it "should not match if facet does not exist" do
+        it "does not match if facet does not exist" do
           Sunspot.search(Post) do
             paginate :page => 5, :per_page => 15
           end
-          Sunspot.session.should_not have_search_params(:facet, :category_ids)
+          expect(Sunspot.session).to_not have_search_params(:facet, :category_ids)
         end
 
-        it "should match when excluding filters" do
+        it "matches when excluding filters" do
           Sunspot.search(Post) do
             category_filter = with(:category_ids, 2)
             facet(:category_ids, :exclude => category_filter)
           end
-          Sunspot.session.should have_search_params(:facet) {
+          expect(Sunspot.session).to have_search_params(:facet) {
             category_filter = with(:category_ids, 2)
             facet(:category_ids, :exclude => category_filter)
           }
@@ -564,7 +564,7 @@ describe "Sunspot Matchers" do
       end
 
       describe "query facets" do
-        it "should match if facet exists" do
+        it "matches if facet exists" do
           Sunspot.search(Post) do
             facet(:average_rating) do
               row(1.0..2.0) do
@@ -575,7 +575,7 @@ describe "Sunspot Matchers" do
               end
             end
           end
-          Sunspot.session.should have_search_params(:facet) {
+          expect(Sunspot.session).to have_search_params(:facet) {
             facet(:average_rating) do
               row(1.0..2.0) do
                 with(:average_rating, 1.0..2.0)
@@ -587,7 +587,7 @@ describe "Sunspot Matchers" do
           }
         end
 
-        it "should match if multiple facet exists, but the facet you are matching on only has a single row" do
+        it "matches if multiple facet exists, but the facet you are matching on only has a single row" do
           Sunspot.search(Post) do
             facet(:average_rating) do
               row(1.0..2.0) do
@@ -604,7 +604,7 @@ describe "Sunspot Matchers" do
               end
             end
           end
-          Sunspot.session.should have_search_params(:facet) {
+          expect(Sunspot.session).to have_search_params(:facet) {
             facet(:average_rating) do
               row(1.0..2.0) do
                 with(:average_rating, 1.0..2.0)
@@ -613,7 +613,7 @@ describe "Sunspot Matchers" do
           }
         end
 
-        it "should not match if actual search is missing a facet" do
+        it "does not match if actual search is missing a facet" do
           Sunspot.search(Post) do
             facet(:average_rating) do
               row(1.0..2.0) do
@@ -621,7 +621,7 @@ describe "Sunspot Matchers" do
               end
             end
           end
-          Sunspot.session.should_not have_search_params(:facet) {
+          expect(Sunspot.session).to_not have_search_params(:facet) {
             facet(:average_rating) do
               row(1.0..2.0) do
                 with(:average_rating, 1.0..2.0)
@@ -633,7 +633,7 @@ describe "Sunspot Matchers" do
           }
         end
 
-        it "should not match if facet query is different" do
+        it "does not match if facet query is different" do
           Sunspot.search(Post) do
             facet(:average_rating) do
               row(1.0..2.0) do
@@ -644,7 +644,7 @@ describe "Sunspot Matchers" do
               end
             end
           end
-          Sunspot.session.should_not have_search_params(:facet) {
+          expect(Sunspot.session).to_not have_search_params(:facet) {
             facet(:average_rating) do
               row(1.0..2.0) do
                 with(:average_rating, 1.0..2.0)
@@ -659,33 +659,33 @@ describe "Sunspot Matchers" do
     end
 
     describe "boost matcher" do
-      it "should match if field boost matches" do
+      it "matches if field boost matches" do
         Sunspot.search(Post) do
           keywords 'great pizza' do
             boost_fields :body => 2.0
           end
         end
-        Sunspot.session.should have_search_params(:boost) {
+        expect(Sunspot.session).to have_search_params(:boost) {
           keywords 'great pizza' do
             boost_fields :body => 2.0
           end
         }
       end
 
-      it "should not match if field boost does not match" do
+      it "does not match if field boost does not match" do
         Sunspot.search(Post) do
           keywords 'great pizza' do
             boost_fields :body => 2.0
           end
         end
-        Sunspot.session.should_not have_search_params(:boost) {
+        expect(Sunspot.session).to_not have_search_params(:boost) {
           keywords 'great pizza' do
             boost_fields :body => 3.0
           end
         }
       end
 
-      it "should match if boost query matches" do
+      it "matches if boost query matches" do
         Sunspot.search(Post) do
           keywords 'great pizza' do
             boost(2.0) do
@@ -693,7 +693,7 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should have_search_params(:boost) {
+        expect(Sunspot.session).to have_search_params(:boost) {
           keywords 'great pizza' do
             boost(2.0) do
               with :blog_id, 4
@@ -702,7 +702,7 @@ describe "Sunspot Matchers" do
         }
       end
 
-      it "should not match if boost query does not match" do
+      it "does not match if boost query does not match" do
         Sunspot.search(Post) do
           keywords 'great pizza' do
             boost(2.0) do
@@ -710,7 +710,7 @@ describe "Sunspot Matchers" do
             end
           end
         end
-        Sunspot.session.should_not have_search_params(:boost) {
+        expect(Sunspot.session).to_not have_search_params(:boost) {
           keywords 'great pizza' do
             boost(2.0) do
               with :blog_id, 5
@@ -719,26 +719,26 @@ describe "Sunspot Matchers" do
         }
       end
 
-      it "should match if boost function matches" do
+      it "matches if boost function matches" do
         Sunspot.search(Post) do
           keywords 'great pizza' do
             boost(function { sum(:average_rating, product(:popularity, 10)) })
           end
         end
-        Sunspot.session.should have_search_params(:boost) {
+        expect(Sunspot.session).to have_search_params(:boost) {
           keywords 'great pizza' do
             boost(function { sum(:average_rating, product(:popularity, 10)) })
           end
         }
       end
 
-      it "should not match if boost function does not match" do
+      it "does not match if boost function does not match" do
         Sunspot.search(Post) do
           keywords 'great pizza' do
             boost(function { sum(:average_rating, product(:popularity, 10)) })
           end
         end
-        Sunspot.session.should_not have_search_params(:boost) {
+        expect(Sunspot.session).to_not have_search_params(:boost) {
           keywords 'great pizza' do
             boost(function { sum(:average_rating, product(:popularity, 42)) })
           end
@@ -747,19 +747,19 @@ describe "Sunspot Matchers" do
     end
 
     describe "group matcher" do
-      it "should match if grouping a field" do
+      it "matches if grouping a field" do
         Sunspot.search(Post) do
           keywords 'great pizza'
           group :author_name
         end
-        Sunspot.session.should have_search_params(:group, :author_name)
+        expect(Sunspot.session).to have_search_params(:group, :author_name)
       end
 
-      it "should match if grouping a field" do
+      it "matches if grouping a field" do
         Sunspot.search(Post) do
           keywords 'great pizza'
         end
-        Sunspot.session.should_not have_search_params(:group, :author_name)
+        expect(Sunspot.session).to_not have_search_params(:group, :author_name)
       end
     end
 
@@ -772,56 +772,54 @@ describe "Sunspot Matchers" do
       end
     end
 
-    it "should succeed if the model is correct" do
-      Sunspot.session.should be_a_search_for(Post)
+    it "succeeds if the model is correct" do
+      expect(Sunspot.session).to be_a_search_for(Post)
     end
 
-    it "should fail if the model is incorrect" do
-      Sunspot.session.should_not be_a_search_for(Blog)
+    it "fails if the model is incorrect" do
+      expect(Sunspot.session).to_not be_a_search_for(Blog)
     end
 
     describe "when searching for multiple models" do
-      it "should be true for both" do
+      it "is true for both" do
         Sunspot.search([Post, Blog]) do
           keywords 'great pizza'
         end
 
-        Sunspot.session.should be_a_search_for(Post)
-        Sunspot.session.should be_a_search_for(Blog)
-        Sunspot.session.should_not be_a_search_for(Person)
+        expect(Sunspot.session).to be_a_search_for(Post)
+        expect(Sunspot.session).to be_a_search_for(Blog)
+        expect(Sunspot.session).to_not be_a_search_for(Person)
       end
     end
 
     describe "with multiple searches" do
-      it "should allow you to choose the search" do
+      it "allows you to choose the search" do
         Sunspot.search(Blog) do
           keywords 'bad pizza'
         end
-        Sunspot.session.searches.first.should be_a_search_for(Post)
-        Sunspot.session.searches.last.should be_a_search_for(Blog)
+        expect(Sunspot.session.searches.first).to be_a_search_for(Post)
+        expect(Sunspot.session.searches.last).to be_a_search_for(Blog)
       end
     end
   end
 
   describe "have_searchable_field" do
-    context "it works with instances as well as classes" do
-      describe Post do
-        it { should have_searchable_field(:body) }
-      end
+    it "works with instances as well as classes" do
+      expect(Post).to have_searchable_field(:body)
     end
 
-    it "should succeed if the model has the given field" do
-      Post.should have_searchable_field(:body)
-      Post.should have_searchable_field(:author_name)
-      Post.should have_searchable_field(:blog_id)
+    it "succeeds if the model has the given field" do
+      expect(Post).to have_searchable_field(:body)
+      expect(Post).to have_searchable_field(:author_name)
+      expect(Post).to have_searchable_field(:blog_id)
     end
 
-    it "should fail if the model does not have the given field" do
-      Post.should_not have_searchable_field(:potato)
+    it "fails if the model does not have the given field" do
+      expect(Post).to_not have_searchable_field(:potato)
     end
 
-    it "should fail if the model does not have any searchable fields" do
-      Person.should_not have_searchable_field(:name)
+    it "fails if the model does not have any searchable fields" do
+      expect(Person).to_not have_searchable_field(:name)
     end
   end
 end
