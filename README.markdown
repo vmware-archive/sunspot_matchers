@@ -66,6 +66,29 @@ You can also use the shorthand syntax:
       it { should have_searchable_field(:name) }
     end
 
+## have_indexed_field
+
+If you want to verify that an index operation has been performed, you can use this matcher:
+
+`Sunspot.session.should have_indexed_field(Post, :name)`
+
+You can also use the shorthand syntax:
+
+    subject(:session) { Sunspot.session }
+    it { should have_indexed_field(Post, :name) }
+    
+You can also pass in a specific model, however this depends on your model having a `.id`:
+
+    before(:each) { @post = create(:post) }
+    subject(:session) { Sunspot.session }
+    it { should have_indexed_field(@post, :name) }
+
+You can even specify what the value should be using `.with("foo")`:
+
+    before(:each) { @post = create(:post, name: "foo") }
+    subject(:session) { Sunspot.session }
+    it { should have_indexed_field(@post, :name).with("foo") }
+
 ## have_search_params
 
 This is where the bulk of the functionality lies.  There are seven types of search matches you can perform: `keywords` or `fulltext`,
