@@ -8,6 +8,27 @@ class Blog;
 end
 class Person;
 end
+class PersistentPost
+  attr_accessor :id, :body, :name, :author_name, :blog_id, :category_ids, :popularity, :published_at, :average_rating
+end
+class PersistentPostInstanceAdapter < Sunspot::Adapters::InstanceAdapter
+  def id
+    1
+  end
+end
+
+Sunspot::Adapters::InstanceAdapter.register(PersistentPostInstanceAdapter, PersistentPost)
+
+Sunspot.setup(PersistentPost) do
+  text :body
+  text :name
+  string :author_name
+  integer :blog_id
+  integer :category_ids
+  integer :popularity
+  time :published_at
+  float :average_rating
+end
 
 Sunspot.setup(Post) do
   text :body
@@ -820,6 +841,49 @@ describe "Sunspot Matchers" do
 
     it "fails if the model does not have any searchable fields" do
       expect(Person).to_not have_searchable_field(:name)
+    end
+  end
+
+  describe "have_indexed_field" do
+    let(:post) {
+      post = PersistentPost.new
+      post.name = "foo"
+      post.id = 1
+      post
+    }
+    before(:each) do
+      Sunspot.session.index(post)
+    end
+    it "works with instances as well as classes" do
+      expect(Sunspot.session).to have_indexed_field(post, :name)
+    end
+
+    it "succeeds if the model has been indexed with the given field" do
+      expect(Sunspot.session).to have_indexed_field(PersistentPost, :name)
+    end
+
+    it "succeeds if the model has been indexed with the given field and value" do
+      expect(Sunspot.session).to have_indexed_field(PersistentPost, :name).with("foo")
+    end
+
+    it "fails if the model does not have the given field" do
+      expect(Sunspot.session).not_to have_indexed_field(PersistentPost, :potatoe)
+    end
+
+    it "fails if the model was not indexed with the given field" do
+      expect(Sunspot.session).not_to have_indexed_field(PersistentPost, :author_name)
+    end
+
+    it "fails if the model was not indexed with the given field and value" do
+      expect(Sunspot.session).not_to have_indexed_field(PersistentPost, :name).with("bar")
+    end
+
+    it "fails if this specific instance of the model was not indexed with the given field" do
+      second_post = PersistentPost.new
+      second_post.id = 2
+      Sunspot.session.index(second_post)
+
+      expect(Sunspot.session).not_to have_indexed_field(second_post, :name)
     end
   end
 end
