@@ -805,7 +805,7 @@ describe "Sunspot Matchers" do
 
   describe "have_searchable_field" do
     it "works with instances as well as classes" do
-      expect(Post).to have_searchable_field(:body)
+      expect(Post.new).to have_searchable_field(:body)
     end
 
     it "succeeds if the model has the given field" do
