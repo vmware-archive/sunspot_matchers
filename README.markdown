@@ -66,28 +66,17 @@ You can also use the shorthand syntax:
       it { should have_searchable_field(:name) }
     end
 
-## have_indexed_field
+## have_been_indexed
 
 If you want to verify that an index operation has been performed, you can use this matcher:
 
-`Sunspot.session.should have_indexed_field(Post, :name)`
-
-You can also use the shorthand syntax:
-
-    subject(:session) { Sunspot.session }
-    it { should have_indexed_field(Post, :name) }
-    
-You can also pass in a specific model, however this depends on your model having a `.id`:
-
-    before(:each) { @post = create(:post) }
-    subject(:session) { Sunspot.session }
-    it { should have_indexed_field(@post, :name) }
-
-You can even specify what the value should be using `.with("foo")`:
-
-    before(:each) { @post = create(:post, name: "foo") }
-    subject(:session) { Sunspot.session }
-    it { should have_indexed_field(@post, :name).with("foo") }
+    subject(:post) { create(:post, foo: "bar") }
+    it { is_expected.to have_been_indexed }
+    it { is_expected.to have_been_indexed.with_field(:foo, "bar") }
+    it { is_expected.to have_been_indexed.with_field(:foo, any_param) }
+    it "indexes a Post" do
+      expect(Post).to have_been_indexed
+    end
 
 ## have_search_params
 

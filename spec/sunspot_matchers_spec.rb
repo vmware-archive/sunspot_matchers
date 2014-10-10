@@ -844,7 +844,7 @@ describe "Sunspot Matchers" do
     end
   end
 
-  describe "have_indexed_field" do
+  describe "have_been_indexed" do
     let(:post) {
       post = PersistentPost.new
       post.name = "foo"
@@ -854,28 +854,36 @@ describe "Sunspot Matchers" do
     before(:each) do
       Sunspot.session.index(post)
     end
-    it "works with instances as well as classes" do
-      expect(Sunspot.session).to have_indexed_field(post, :name)
+    it "works with instances" do
+      expect(post).to have_been_indexed
     end
 
-    it "succeeds if the model has been indexed with the given field" do
-      expect(Sunspot.session).to have_indexed_field(PersistentPost, :name)
+    it "works with classes" do
+      expect(PersistentPost).to have_been_indexed
+    end
+
+    it "differentiates between classes" do
+      expect(Post).not_to have_been_indexed
     end
 
     it "succeeds if the model has been indexed with the given field and value" do
-      expect(Sunspot.session).to have_indexed_field(PersistentPost, :name).with("foo")
+      expect(post).to have_been_indexed.with_field(:name, "foo")
+    end
+
+    it "succeeds if the model has been indexed with the given field and the value is any_param" do
+      expect(post).to have_been_indexed.with_field(:name, any_param)
     end
 
     it "fails if the model does not have the given field" do
-      expect(Sunspot.session).not_to have_indexed_field(PersistentPost, :potatoe)
+      expect(post).not_to have_been_indexed.with_field(:potato, "foo")
     end
 
     it "fails if the model was not indexed with the given field" do
-      expect(Sunspot.session).not_to have_indexed_field(PersistentPost, :author_name)
+      expect(post).not_to have_been_indexed.with_field(:author_name, "foo")
     end
 
     it "fails if the model was not indexed with the given field and value" do
-      expect(Sunspot.session).not_to have_indexed_field(PersistentPost, :name).with("bar")
+      expect(post).not_to have_been_indexed.with_field(:name, "bar")
     end
 
     it "fails if this specific instance of the model was not indexed with the given field" do
@@ -883,7 +891,7 @@ describe "Sunspot Matchers" do
       second_post.id = 2
       Sunspot.session.index(second_post)
 
-      expect(Sunspot.session).not_to have_indexed_field(second_post, :name)
+      expect(second_post).not_to have_been_indexed.with_field(:name, "foo")
     end
   end
 end
