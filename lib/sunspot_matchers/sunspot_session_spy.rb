@@ -16,6 +16,7 @@ module SunspotMatchers
     attr_reader :current_search_class
 
     attr_accessor :searches
+    attr_accessor :indexed
 
     def initialize(original_session)
       # Support Sunspot random field in test -- Sunspot originally generate a random number for the field
@@ -26,6 +27,7 @@ module SunspotMatchers
         end
       end
 
+      @indexed = []
       @searches = []
       @original_session = original_session
       @config = Sunspot::Configuration.build
@@ -36,9 +38,20 @@ module SunspotMatchers
     end
 
     def index(*objects)
+      objects.flatten!
+      @indexer ||= Sunspot::Indexer.new(nil)
+      results = objects.map do |object|
+        Sunspot::Util.Array(object).map { |m| @indexer.prepare(m) }
+      end
+      results.each do |doc|
+        doc.each do |d|
+          @indexed << d
+        end
+      end
     end
 
     def index!(*objects)
+      index(objects)
     end
 
     def remove(*objects)

@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/grossadamm/sunspot.git
+  revision: f27dcf78859ac974a48eafab3e84271f092f0c8a
+  specs:
+    sunspot (2.1.1)
+      pr_geohash (~> 1.0)
+      rsolr (~> 1.0.7)
+
 PATH
   remote: .
   specs:
@@ -20,9 +28,6 @@ GEM
     rspec-expectations (2.14.5)
       diff-lcs (>= 1.1.3, < 2.0)
     rspec-mocks (2.14.6)
-    sunspot (2.1.1)
-      pr_geohash (~> 1.0)
-      rsolr (~> 1.0.7)
 
 PLATFORMS
   ruby
@@ -31,5 +36,5 @@ DEPENDENCIES
   bundler (>= 1.0.0)
   rake
   rspec (~> 2.0)
-  sunspot (~> 2.1.1)
+  sunspot!
   sunspot_matchers!

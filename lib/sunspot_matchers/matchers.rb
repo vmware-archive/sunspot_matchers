@@ -348,6 +348,101 @@ module SunspotMatchers
   def have_searchable_field(field)
     HaveSearchableField.new(field)
   end
+
+  class HaveBeenIndexed
+    def initialize
+    end
+
+    def matches?(klass_or_object)
+      @klass = klass_or_object.class.name == 'Class' ? klass_or_object : klass_or_object.class
+      @object = klass_or_object.class.name != 'Class' ? klass_or_object : nil
+      
+      Sunspot.session.indexed.find do |document|
+        next unless matches_class?(document, @klass)
+        next unless matches_object?(document, @object) if @object
+        document.fields.find do |field|
+          return true if matches_field_name?(field) && matches_target_value?(field)
+        end
+      end 
+
+      false
+    end
+
+    def description
+      message = "should have indexed #{@klass}" 
+      message << " with id #{@object.id}" if @object
+      message << " with a field #{@field} of value #{@target_value}" if @target_value
+    end
+
+    def failure_message
+      message = "expected Sunspot session to have indexed #{@klass}"
+      message << " with id #{@object.id}" if @object
+      message << " with a field #{@field} of value #{@target_value}" if @target_value
+      message << ", but Sunspot did not"
+    end
+
+    def negative_failure_message
+      message = "should have NOT indexed #{@klass}" 
+      message << " with id #{@object.id}" if @object
+      message << " with a field #{@field} of value #{@target_value}" if @target_value
+    end
+
+    def failure_message_when_negated
+      negative_failure_message
+    end
+
+    def with_field(field, value)
+      @field = field
+      @target_value = value
+      self
+    end
+
+    private
+      def id_field(document)
+        document.fields.find do |field|
+          field.attrs[:name] == :id
+        end
+      end
+
+      def matches_object?(document, object)
+        return false unless object
+        id_field = id_field(document)
+
+        return false unless id_field
+
+        id_field.value == "#{object.class.name} #{object.id}"
+      end
+
+      def matches_class?(document, klass)
+        return false unless klass
+        id_field = id_field(document)
+
+        return false unless id_field
+
+        id_field.value.rpartition(' ').first == klass.to_s
+      end
+
+      def matches_target_value?(field)
+        return true unless @target_value
+        return true if @target_value == any_param
+        field.value == @target_value.to_s
+      end
+
+      def matches_field_name?(field)
+        return true unless @field
+
+        sunspot = Sunspot::Setup.for(@klass)
+        sunspot_field = (sunspot.all_text_fields + sunspot.fields).find {|field| field.name == @field}
+
+        return false unless sunspot_field
+        field.attrs[:name] == sunspot_field.indexed_name.to_sym
+      end
+  end
+
+  def have_been_indexed()
+    HaveBeenIndexed.new
+  end
+
 end
 
 class AnyParam < String

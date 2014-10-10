@@ -66,6 +66,18 @@ You can also use the shorthand syntax:
       it { should have_searchable_field(:name) }
     end
 
+## have_been_indexed
+
+If you want to verify that an index operation has been performed, you can use this matcher:
+
+    subject(:post) { create(:post, foo: "bar") }
+    it { is_expected.to have_been_indexed }
+    it { is_expected.to have_been_indexed.with_field(:foo, "bar") }
+    it { is_expected.to have_been_indexed.with_field(:foo, any_param) }
+    it "indexes a Post" do
+      expect(Post).to have_been_indexed
+    end
+
 ## have_search_params
 
 This is where the bulk of the functionality lies.  There are seven types of search matches you can perform: `keywords` or `fulltext`,

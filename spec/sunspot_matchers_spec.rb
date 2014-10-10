@@ -8,6 +8,27 @@ class Blog;
 end
 class Person;
 end
+class PersistentPost
+  attr_accessor :id, :body, :name, :author_name, :blog_id, :category_ids, :popularity, :published_at, :average_rating
+end
+class PersistentPostInstanceAdapter < Sunspot::Adapters::InstanceAdapter
+  def id
+    1
+  end
+end
+
+Sunspot::Adapters::InstanceAdapter.register(PersistentPostInstanceAdapter, PersistentPost)
+
+Sunspot.setup(PersistentPost) do
+  text :body
+  text :name
+  string :author_name
+  integer :blog_id
+  integer :category_ids
+  integer :popularity
+  time :published_at
+  float :average_rating
+end
 
 Sunspot.setup(Post) do
   text :body
@@ -805,7 +826,7 @@ describe "Sunspot Matchers" do
 
   describe "have_searchable_field" do
     it "works with instances as well as classes" do
-      expect(Post).to have_searchable_field(:body)
+      expect(Post.new).to have_searchable_field(:body)
     end
 
     it "succeeds if the model has the given field" do
@@ -820,6 +841,57 @@ describe "Sunspot Matchers" do
 
     it "fails if the model does not have any searchable fields" do
       expect(Person).to_not have_searchable_field(:name)
+    end
+  end
+
+  describe "have_been_indexed" do
+    let(:post) {
+      post = PersistentPost.new
+      post.name = "foo"
+      post.id = 1
+      post
+    }
+    before(:each) do
+      Sunspot.session.index(post)
+    end
+    it "works with instances" do
+      expect(post).to have_been_indexed
+    end
+
+    it "works with classes" do
+      expect(PersistentPost).to have_been_indexed
+    end
+
+    it "differentiates between classes" do
+      expect(Post).not_to have_been_indexed
+    end
+
+    it "succeeds if the model has been indexed with the given field and value" do
+      expect(post).to have_been_indexed.with_field(:name, "foo")
+    end
+
+    it "succeeds if the model has been indexed with the given field and the value is any_param" do
+      expect(post).to have_been_indexed.with_field(:name, any_param)
+    end
+
+    it "fails if the model does not have the given field" do
+      expect(post).not_to have_been_indexed.with_field(:potato, "foo")
+    end
+
+    it "fails if the model was not indexed with the given field" do
+      expect(post).not_to have_been_indexed.with_field(:author_name, "foo")
+    end
+
+    it "fails if the model was not indexed with the given field and value" do
+      expect(post).not_to have_been_indexed.with_field(:name, "bar")
+    end
+
+    it "fails if this specific instance of the model was not indexed with the given field" do
+      second_post = PersistentPost.new
+      second_post.id = 2
+      Sunspot.session.index(second_post)
+
+      expect(second_post).not_to have_been_indexed.with_field(:name, "foo")
     end
   end
 end
