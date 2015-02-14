@@ -762,7 +762,6 @@ describe "Sunspot Matchers" do
         expect(Sunspot.session).to_not have_search_params(:group, :author_name)
       end
     end
-
   end
 
   describe "be_a_search_for" do
