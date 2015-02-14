@@ -332,7 +332,7 @@ module SunspotMatchers
     end
 
     def description
-      "should have searchable field #{@field}"
+      "have searchable field '#{@field}'"
     end
 
     def failure_message

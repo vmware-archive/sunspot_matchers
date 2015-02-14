@@ -803,6 +803,12 @@ describe "Sunspot Matchers" do
   end
 
   describe "have_searchable_field" do
+    it "provides a description" do
+      field_name = :author_name
+      description = "have searchable field '#{field_name}'"
+      expect(have_searchable_field(field_name).description).to eq description
+    end
+
     it "works with instances as well as classes" do
       expect(Post).to have_searchable_field(:body)
     end
