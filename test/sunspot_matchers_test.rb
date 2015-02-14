@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'bundler'
 require 'sunspot_matchers/test_helper'
-require 'test/unit'
 
 class Post; end
 class Blog; end
@@ -23,7 +22,7 @@ Sunspot.setup(Blog) do
   string :name
 end
 
-class SunspotMatchersTest < Test::Unit::TestCase
+class SunspotMatchersTest < MiniTest::Unit::TestCase
   include SunspotMatchers::TestHelper
 
   def setup
