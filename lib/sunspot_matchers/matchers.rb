@@ -313,6 +313,10 @@ module SunspotMatchers
     def failure_message_when_negated
       "expected search class: #{search_types.join(' and ')} NOT to match expected class: #{@expected_class}"
     end
+
+    def description
+      "be a search for #{@expected_class}"
+    end
   end
 
   def be_a_search_for(expected_class)

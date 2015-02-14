@@ -771,6 +771,12 @@ describe "Sunspot Matchers" do
       end
     end
 
+    it "provides a description" do
+      expected_class = Post
+      description = "be a search for #{expected_class}"
+      expect(be_a_search_for(expected_class).description).to eq description
+    end
+
     it "succeeds if the model is correct" do
       expect(Sunspot.session).to be_a_search_for(Post)
     end
