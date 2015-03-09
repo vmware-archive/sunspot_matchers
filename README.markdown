@@ -66,6 +66,18 @@ You can also use the shorthand syntax:
       it { should have_searchable_field(:name) }
     end
 
+## have_dynamic_field
+
+If you want to verify that a model has a dynamic searchable field, you can use this matcher:
+
+`Post.should have_dynamic_field(:commenter_read)`
+
+You can also use the shorthand syntax:
+
+    describe User do
+      it { should have_dynamic_field(:commenter_read) }
+    end
+
 ## have_search_params
 
 This is where the bulk of the functionality lies.  There are seven types of search matches you can perform: `keywords` or `fulltext`,

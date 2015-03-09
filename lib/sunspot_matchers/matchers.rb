@@ -331,8 +331,7 @@ module SunspotMatchers
 
     def matches?(klass_or_object)
       @klass = klass_or_object.class.name == 'Class' ? klass_or_object : klass_or_object.class
-      @sunspot = Sunspot::Setup.for(@klass)
-      @sunspot && (@sunspot.all_text_fields + @sunspot.fields).collect(&:name).include?(@field)
+      sunspot && fields_to_match.include?(@field)
     end
 
     def description
@@ -347,11 +346,43 @@ module SunspotMatchers
     def failure_message_when_negated
       "expected class: #{@klass} NOT to have searchable field: #{@field}"
     end
+
+    def sunspot
+      @sunspot ||= Sunspot::Setup.for(@klass)
+    end
+
+    def fields_to_match
+      (sunspot.all_text_fields + sunspot.fields).collect(&:name)
+    end
   end
 
   def have_searchable_field(field)
     HaveSearchableField.new(field)
   end
+
+  class HaveDynamicField < HaveSearchableField
+    def description
+      "have dynamic searchable field '#{@field}'"
+    end
+
+    def failure_message
+      message = "expected class: #{@klass} to have dynamic searchable field: #{@field}"
+      message << ", but Sunspot was not configured on #{@klass}" unless @sunspot
+    end
+
+    def failure_message_when_negated
+      "expected class: #{@klass} NOT to have dynamic searchable field: #{@field}"
+    end
+
+    def fields_to_match
+      sunspot.dynamic_field_factories.collect(&:name)
+    end
+  end
+
+  def have_dynamic_field(field)
+    HaveDynamicField.new(field)
+  end
+
 end
 
 class AnyParam < String

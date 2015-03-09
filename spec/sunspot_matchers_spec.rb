@@ -18,6 +18,7 @@ Sunspot.setup(Post) do
   integer :popularity
   time :published_at
   float :average_rating
+  dynamic_boolean(:commenter_read)
 end
 
 Sunspot.setup(Blog) do
@@ -815,8 +816,9 @@ describe "Sunspot Matchers" do
       expect(have_searchable_field(field_name).description).to eq description
     end
 
-    it "works with instances as well as classes" do
-      expect(Post).to have_searchable_field(:body)
+    context "when given an instance" do
+      subject {Post.new}
+      it { is_expected.to have_searchable_field(:body) }
     end
 
     it "succeeds if the model has the given field" do
@@ -831,6 +833,31 @@ describe "Sunspot Matchers" do
 
     it "fails if the model does not have any searchable fields" do
       expect(Person).to_not have_searchable_field(:name)
+    end
+  end
+
+  describe "have_dynamic_field" do
+    it "provides a description" do
+      field_name = :commenter_read
+      description = "have dynamic searchable field '#{field_name}'"
+      expect(have_dynamic_field(field_name).description).to eq description
+    end
+
+    context "when given an instance" do
+      subject {Post.new}
+      it { is_expected.to have_dynamic_field(:commenter_read) }
+    end
+
+    it "succeeds if the model has the given field" do
+      expect(Post).to have_dynamic_field(:commenter_read)
+    end
+
+    it "fails if the model does not have the given field" do
+      expect(Post).to_not have_dynamic_field(:potato)
+    end
+
+    it "fails if the model does not have any dynamic fields" do
+      expect(Person).to_not have_dynamic_field(:name)
     end
   end
 end
