@@ -233,6 +233,14 @@ describe "Sunspot Matchers" do
         end
         expect(Sunspot.session).to_not have_search_params(:with, :blog_id, any_param)
       end
+
+      it "works when tags exist on the field query" do
+        Sunspot.search(Post) do
+          restriction = with :category_ids, 7
+          facet :category_ids, exclude: restriction
+        end
+        expect(Sunspot.session).to have_search_params(:with, :category_ids, 7)
+      end
     end
 
     describe "without matcher" do
