@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sunspot_matchers (2.1.1.1)
+    sunspot_matchers (2.2.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -10,7 +10,7 @@ GEM
     diff-lcs (1.2.5)
     pr_geohash (1.0.0)
     rake (10.4.2)
-    rsolr (1.0.10)
+    rsolr (1.0.12)
       builder (>= 2.1.2)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
@@ -25,7 +25,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.1)
-    sunspot (2.1.1)
+    sunspot (2.2.0)
       pr_geohash (~> 1.0)
       rsolr (~> 1.0.7)
 
@@ -36,5 +36,5 @@ DEPENDENCIES
   bundler (>= 1.0.0)
   rake
   rspec
-  sunspot (~> 2.1.1)
+  sunspot (~> 2.2.0)
   sunspot_matchers!
