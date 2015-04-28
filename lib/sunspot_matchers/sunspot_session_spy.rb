@@ -67,7 +67,7 @@ module SunspotMatchers
       false
     end
 
-    def commit_if_dirty
+    def commit_if_dirty(soft_delete = false)
     end
 
     def commit_if_delete_dirty
