@@ -70,10 +70,10 @@ module SunspotMatchers
     def commit_if_dirty(soft_delete = false)
     end
 
-    def commit_if_delete_dirty
+    def commit_if_delete_dirty(soft_delete = false)
     end
 
-    def commit
+    def commit(soft_delete = false)
     end
 
     def search(*types, &block)
