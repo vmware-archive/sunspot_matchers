@@ -93,9 +93,9 @@ block.  Keep in mind, that only the expectation type specified as the argument w
 you specify `keywords` and `with` restrictions in the same block, but you said `have_search_params(:keywords, ...`
 the `with` restrictions are simply ignored.
 
-Without creative usage of parentheses you can not use do...end blocks to pass multi statement expectations to the matcher
-though.  Because do...end have such a low binding precedent, the block is passed to the wrong method.  Curly syntax blocks
-will work though {...}, or you can pass a Proc as the last argument.
+Without creative usage of parentheses you can not use `do...end` blocks to pass multi statement expectations to the matcher
+though.  Because `do...end` have such a low binding precedent, the block is passed to the wrong method.  Curly syntax blocks
+will work though `{...}`, or you can pass a Proc as the last argument.
 
 ### wildcard matching
 
@@ -171,13 +171,25 @@ You can also specify only page or per_page, both are not required.
 
 ### :order_by
 
-Expectations on multiple orderings are supported using using the block format mentioned above.
+Standard ordering expectation:
 
     Sunspot.search(Post) do
       order_by :published_at, :desc
     end
 
     Sunspot.session.should have_search_params(:order_by, :published_at, :desc)
+
+Expectations on multiple orderings are supported using using the block format:
+
+    Sunspot.search(Post) do
+      order_by :author_name, :asc
+      order_by :published_at, :desc
+    end
+
+    Sunspot.session.should have_search_params(:order_by) {
+      order_by :author_name, :asc
+      order_by :published_at, :desc
+    }
 
 ### :facet
 
