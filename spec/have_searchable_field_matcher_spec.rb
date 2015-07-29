@@ -3,6 +3,9 @@ require 'sunspot_matchers'
 require 'rspec'
 
 describe SunspotMatchers::HaveSearchableField do
+  class NotALotGoingOn; end
+  class IndexedWithWrongThings; end
+
   let(:matcher) do
     described_class.new(:field).tap do |matcher|
       matcher.matches? klass
@@ -10,7 +13,7 @@ describe SunspotMatchers::HaveSearchableField do
   end
 
   context "when a class has no searchable fields" do
-    let(:klass) { NotALotGoingOn = Class.new }
+    let(:klass) { NotALotGoingOn }
 
     it "gives Sunspot configuration error" do
       expect(matcher.failure_message).to match(/Sunspot was not configured/)
@@ -18,7 +21,7 @@ describe SunspotMatchers::HaveSearchableField do
   end
 
   context "when a class has an unexpected searchable field" do
-    let(:klass) { IndexedWithWrongThings = Class.new }
+    let(:klass) { IndexedWithWrongThings }
     before do
       Sunspot.setup(klass) { text :parachute }
     end
