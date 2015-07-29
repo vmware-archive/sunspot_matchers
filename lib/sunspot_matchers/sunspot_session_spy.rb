@@ -109,5 +109,9 @@ module SunspotMatchers
         Sunspot::CompositeSetup.for(types)
       end
     end
+
+    def more_like_this(object, *types, &block)
+      new_more_like_this(object, *types, &block)
+    end
   end
 end
