@@ -9,7 +9,7 @@ module SunspotMatchers
     def initialize(session, method, *args, &block)
       @session = session
       @method = method
-      @args = [*args, block].compact
+      @args = (block.nil? ? args : [*args, block])
     end
 
     def get_matcher
@@ -33,7 +33,7 @@ module SunspotMatchers
     end
   end
 
-  
+
   class BeASearchForSession
     def initialize(session, expected_class)
       @session = session
@@ -74,7 +74,7 @@ module SunspotMatchers
       matcher = HaveSearchParamsForSession.new(session, method, *args, &block).get_matcher
       assert !matcher.match?, matcher.unexpected_match_error_message
     end
-    
+
     def assert_is_search_for(session, expected_class)
       matcher = BeASearchForSession.new(session, expected_class)
       assert matcher.match?, matcher.failure_message_for_should

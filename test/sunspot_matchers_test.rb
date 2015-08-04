@@ -47,7 +47,21 @@ class SunspotMatchersTest < MiniTest::Unit::TestCase
     end
     assert_has_search_params Sunspot.session, :keywords, 'great pizza'
   end
-  
+
+  def test_respects_expectation_on_nil
+    Sunspot.search(Post) do
+      with(:published_at, Time.now)
+    end
+    assert_raises(MiniTest::Assertion) { assert_has_search_params(Sunspot.session, :with, :published_at, nil) }
+  end
+
+  def test_respects_negated_expectation_on_nil
+    Sunspot.search(Post) do
+      with(:published_at, Time.now)
+    end
+    assert_has_no_search_params Sunspot.session, :with, :published_at, nil
+  end
+
   def test_match_keywords
     Sunspot.search(Post) do
       keywords 'great pizza'
@@ -699,7 +713,7 @@ class SunspotMatchersTest < MiniTest::Unit::TestCase
     assert_is_search_for Sunspot.session, Blog
     assert_is_not_search_for Sunspot.session, Person
   end
- 
+
   def test_be_a_search_for_multiple_searches
     Sunspot.search(Post) { keywords 'great pizza' }
     Sunspot.search(Blog) { keywords 'bad pizza' }

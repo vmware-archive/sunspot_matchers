@@ -127,7 +127,7 @@ module SunspotMatchers
   class HaveSearchParams
     def initialize(method, *args, &block)
       @method = method
-      @args = [*args, block].compact
+      @args = (block.nil? ? args : [*args, block])
     end
 
     def matches?(actual)

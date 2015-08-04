@@ -52,6 +52,22 @@ describe "Sunspot Matchers" do
       expect(Sunspot.session.searches.last).to have_search_params(:keywords, 'bad pizza')
     end
 
+    context 'when the search arg is nil' do
+      before do
+        Sunspot.search(Post) { with(:published_at, Time.now) }
+      end
+
+      it 'respects expectations on nil parameters' do
+        expect {
+          expect(Sunspot.session.searches.first).to have_search_params(:with, :published_at, nil)
+        }.to raise_error RSpec::Expectations::ExpectationNotMetError
+      end
+
+      it 'allows negated expectation on nil' do
+        expect(Sunspot.session.searches.last).not_to have_search_params(:with, :published_at, nil)
+      end
+    end
+
     describe "keyword/fulltext matcher" do
       it "matches if search matches" do
         Sunspot.search(Post) do
