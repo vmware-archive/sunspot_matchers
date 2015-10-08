@@ -9,6 +9,9 @@ module SunspotMatchers
     def facet_response
       {'facet_queries' => {}}
     end
+    def group_response
+      {}
+    end
   end
 
   class SunspotSessionSpy < Sunspot::Session
