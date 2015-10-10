@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sunspot_matchers (2.2.0.3)
+    sunspot_matchers (2.2.0.4)
 
 GEM
   remote: https://rubygems.org/
@@ -38,3 +38,6 @@ DEPENDENCIES
   rspec
   sunspot (~> 2.2.0)
   sunspot_matchers!
+
+BUNDLED WITH
+   1.10.6
