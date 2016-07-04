@@ -304,9 +304,9 @@ These are used like:
     Sunspot.search(Post) do
       with :category_ids, 1..3
     end
-    assert_has_search_params Sunspot.session, :with {
+    assert_has_search_params(Sunspot.session, :with) do
       with :category_ids, 1..3
-    }
+    end
     
     Sunspot.search(Post) { keywords 'great pizza' }
     Sunspot.search([ Post, Blog ]) do
