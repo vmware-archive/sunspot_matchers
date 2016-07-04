@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "sunspot", "~> 2.2.0"
   s.add_development_dependency "rake"
+  s.add_development_dependency "minitest"
 
   s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'

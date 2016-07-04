@@ -24,6 +24,7 @@ module SunspotMatchers
       # Support Sunspot random field in test -- Sunspot originally generate a random number for the field
       # Only patch method if SunspotSessionSpy is initialized to prevent poisoning class simply by being included in Gemfile.
       Sunspot::Query::Sort::RandomSort.class_eval do
+        remove_method :to_param
         define_method :to_param do
           "random #{direction_for_solr}"
         end
