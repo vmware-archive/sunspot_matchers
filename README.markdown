@@ -12,19 +12,25 @@ fixture scenarios inside of Solr and then actually perform a search against Solr
 You will need to replace the Sunspot Session object with the spy provided.  You can do this globally by putting the
 following in your spec_helper.
 
-    config.before do
+```rb
+    config.before do
       Sunspot.session = SunspotMatchers::SunspotSessionSpy.new(Sunspot.session)
     end
+```
 
 Keep in mind, this will prevent any test from actually hitting Solr, so if you have integration tests, you'll either
 need to be more careful which tests you replace the session for, or you'll need to restore the original session before
 those tests
 
+```rb
     Sunspot.session = Sunspot.session.original_session
+```
 
 You will also need to include the matchers in your specs.  Again, this can be done globally in your spec_helper.
 
+```rb
     config.include SunspotMatchers
+```
 
 Alternately, you could include them into individual tests if needed.
 
@@ -32,51 +38,65 @@ Alternately, you could include them into individual tests if needed.
 
 You will need to replace the Sunspot Session object with the spy provided.  You can do this by requiring the sunspot test helper
 
+```rb
     require 'sunspot_matchers/test_helper'
+```
 
 and then in the test case that you wish to override, including the SunspotMatchers::TestHelper class and set the sunspot session in your setup.
 
+```rb
     include SunspotMatchers::TestHelper
     def setup
       Sunspot.session = SunspotMatchers::SunspotSessionSpy.new(Sunspot.session)
     end
+```
 
 # Matchers
 
 ## be_a_search_for
 
 If you perform a search against your Post model, you could write this expectation:
-
-`Sunspot.session.should be_a_search_for(Post)`
+```rb
+    Sunspot.session.should be_a_search_for(Post)
+```
 
 Individual searches are stored in an array, so if you perform multiple, you'll have to match against them manually.  Without
 an explicit search specified, it will use the last one.
 
-`Sunspot.session.searches.first.should be_a_search_for(Post)`
+```rb
+    Sunspot.session.searches.first.should be_a_search_for(Post)
+```
 
 ## have_searchable_field
 
 If you want to verify that a model has a searchable field, you can use this matcher:
 
-`Post.should have_searchable_field(:name)`
+```rb
+    Post.should have_searchable_field(:name)
+```
 
 You can also use the shorthand syntax:
 
+```rb
     describe User do
       it { should have_searchable_field(:name) }
     end
+```
 
 ## have_dynamic_field
 
 If you want to verify that a model has a dynamic searchable field, you can use this matcher:
 
-`Post.should have_dynamic_field(:commenter_read)`
+```rb
+    Post.should have_dynamic_field(:commenter_read)
+```
 
 You can also use the shorthand syntax:
-
+```rb
     describe User do
       it { should have_dynamic_field(:commenter_read) }
     end
+```
 
 ## have_search_params
 
@@ -101,6 +121,7 @@ will work though `{...}`, or you can pass a Proc as the last argument.
 
 keywords, with, without, and order_by support wildcard expectations using the `any_param` parameter:
 
+```rb
     Sunspot.search(Post) do
       with :blog_id, 4
       order_by :blog_id, :desc
@@ -110,31 +131,37 @@ keywords, with, without, and order_by support wildcard expectations using the `a
     Sunspot.session.should have_search_params(:order_by, :blog_id, any_param)
     Sunspot.session.should have_search_params(:order_by, any_param)
     Sunspot.session.should_not have_search_params(:order_by, :category_ids, any_param)
+```
 
 ### :keywords
 
 You can match against a keyword search:
 
+```rb
     Sunspot.search(Post) do
       keywords 'great pizza'
     end
 
     Sunspot.session.should have_search_params(:keywords, 'great pizza')
+```
 
 ### :with
 
 You can match against a with restriction:
 
+```rb
     Sunspot.search(Post) do
       with :author_name, 'Mark Twain'
     end
 
     Sunspot.session.should have_search_params(:with, :author_name, 'Mark Twain')
+```
 
 Complex conditions can be matched by using a block instead of a value.  Be aware that order does matter, not for
 the actual results that would come out of Solr, but the matcher will fail of the order of `with` restrictions is
 different.
 
+```rb
     Sunspot.search(Post) do
       any_of do
         with :category_ids, 1
@@ -148,39 +175,47 @@ different.
         with :category_ids, 2
       end
     }
+```
 
 ### :without
 
 Without is nearly identical to with:
 
+```rb
     Sunspot.search(Post) do
       without :author_name, 'Mark Twain'
     end
 
     Sunspot.session.should have_search_params(:without, :author_name, 'Mark Twain')
+```
 
 ### :paginate
 
 You can also specify only page or per_page, both are not required.
 
+```rb
     Sunspot.search(Post) do
       paginate :page => 3, :per_page => 15
     end
 
     Sunspot.session.should have_search_params(:paginate, :page => 3, :per_page => 15)
+```
 
 ### :order_by
 
 Standard ordering expectation:
 
+```rb
     Sunspot.search(Post) do
       order_by :published_at, :desc
     end
 
     Sunspot.session.should have_search_params(:order_by, :published_at, :desc)
+```
 
 Expectations on multiple orderings are supported using using the block format:
 
+```rb
     Sunspot.search(Post) do
       order_by :author_name, :asc
       order_by :published_at, :desc
@@ -190,19 +225,23 @@ Expectations on multiple orderings are supported using using the block format:
       order_by :author_name, :asc
       order_by :published_at, :desc
     }
+```
 
 ### :facet
 
 Standard faceting expectation:
 
+```rb
     Sunspot.search(Post) do
       facet :category_ids
     end
 
     Sunspot.session.should have_search_params(:facet, :category_ids)
+```
 
 Faceting where a query is excluded:
 
+```rb
     Sunspot.search(Post) do
       category_filter = with(:category_ids, 2)
       facet(:category_ids, :exclude => category_filter)
@@ -212,9 +251,11 @@ Faceting where a query is excluded:
       category_filter = with(:category_ids, 2)
       facet(:category_ids, :exclude => category_filter)
     }
+```
 
 Query faceting:
 
+```rb
     Sunspot.search(Post) do
       facet(:average_rating) do
         row(1.0..2.0) do
@@ -225,7 +266,7 @@ Query faceting:
         end
       end
     end
-    
+
     Sunspot.session.should have_search_params(:facet) {
       facet(:average_rating) do
         row(1.0..2.0) do
@@ -236,11 +277,13 @@ Query faceting:
         end
       end
     }
+```
 
 ### :boost
 
 Field boost matching:
 
+```rb
     Sunspot.search(Post) do
       keywords 'great pizza' do
         boost_fields :body => 2.0
@@ -252,9 +295,11 @@ Field boost matching:
         boost_fields :body => 2.0
       end
     }
+```
 
 Boost query matching:
 
+```rb
     Sunspot.search(Post) do
       keywords 'great pizza' do
         boost(2.0) do
@@ -270,9 +315,11 @@ Boost query matching:
         end
       end
     }
+```
 
 Boost function matching:
 
+```rb
     Sunspot.search(Post) do
       keywords 'great pizza' do
         boost(function { sum(:average_rating, product(:popularity, 10)) })
@@ -284,18 +331,19 @@ Boost function matching:
         boost(function { sum(:average_rating, product(:popularity, 10)) })
       end
     }
+```
 
 # Assertions
 
-If you are using Test::Unit, the format is similar, but we use 
+If you are using Test::Unit, the format is similar, but we use
 
-`assert_has_search_params` 
-`assert_has_no_search_params` 
+`assert_has_search_params`
+`assert_has_no_search_params`
 `assert_is_search_for`
 `assert_is_not_search_for`
 
 These are used like:
-
+```rb
     Sunspot.search([ Post, Blog ]) do
       keywords 'great pizza'
     end
@@ -307,14 +355,15 @@ These are used like:
     assert_has_search_params Sunspot.session, :with {
       with :category_ids, 1..3
     }
-    
+
     Sunspot.search(Post) { keywords 'great pizza' }
     Sunspot.search([ Post, Blog ]) do
       keywords 'great pizza'
     end
-    
+
     assert_is_search_for Sunspot.session, Post
     assert_is_search_for Sunspot.session, Blog
     assert_is_not_search_for Sunspot.session, Person
-    
+```
+
 Check out the test/sunspot_matchers_test.rb for more examples
